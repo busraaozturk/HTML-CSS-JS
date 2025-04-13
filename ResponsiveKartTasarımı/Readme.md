@@ -19,3 +19,4 @@ Bu proje, HTML ve CSS kullanılarak oluşturulmuş **modern ve duyarlı (respons
 - **card.css** → Animasyon ve görünüm için CSS kodları
 
 ## 📸 Ekran Görüntüsü
+![image](https://github.com/user-attachments/assets/ad40c210-fc8f-4779-a05e-1a81db53ad40)
