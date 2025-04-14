@@ -1,0 +1,73 @@
+html{
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+    overflow: hidden;
+    height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  }
+
+.container{
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+    display: flex;
+    gap: 16px;
+    padding: 20px;
+    box-sizing: border-box;
+    width: 350px;
+    margin: auto;
+    scroll-behavior: smooth;
+}
+
+.card{
+    flex: 0 0 auto;
+    width: 300px;
+    height: 300px;
+    background-color: #e0e0e0;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    transition: transform 0.3s ease;
+    scroll-snap-align: center;
+}
+
+.container::-webkit-scrollbar {
+    height: 10px;
+} 
+
+.container::-webkit-scrollbar-track {
+    background: #f0f0f0; 
+    border-radius: 10px;
+}
+
+.container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+    border: 2px solid #f0f0f0; 
+}
+
+.card:nth-child(1) {
+    background-color: #FFCDD2; /* kırmızı ton */
+  }
+  .card:nth-child(2) {
+    background-color: #C8E6C9; /* yeşil ton */
+  }
+  .card:nth-child(3) {
+    background-color: #BBDEFB; /* mavi ton */
+  }
+  .card:nth-child(4) {
+    background-color: #FFF9C4; /* sarı ton */
+  }
+  .card:nth-child(5) {
+    background-color: #D1C4E9; /* mor ton */
+  }
+  
