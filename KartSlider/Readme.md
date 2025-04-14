@@ -21,4 +21,4 @@ Bu proje, HTML ve CSS kullanılarak yatay olarak kaydırılabilen, kart tasarım
 - **scrollcard.css** → Kartları ve container'ı stillendiren CSS
 
 ## 📸 Ekran Görüntüsü
-
+https://github.com/user-attachments/assets/80f7ebab-6538-4349-998d-c5ba075939b8
