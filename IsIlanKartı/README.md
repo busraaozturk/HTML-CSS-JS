@@ -22,4 +22,5 @@ Bu proje, **HTML** ve **CSS** kullanılarak tasarlanmış modern bir **Google pr
 - **style.css** → Kartı stillendiren CSS
 
 ## 📸 Ekran Görüntüsü
+<img width="555" alt="İlanKartı" src="https://github.com/user-attachments/assets/ad601ecf-facb-478a-979c-ee408fa33b58" />
 
