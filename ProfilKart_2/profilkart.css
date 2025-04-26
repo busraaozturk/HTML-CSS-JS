@@ -1,0 +1,95 @@
+body{
+    font-family: 'Times New Roman', Times, serif;
+    background: linear-gradient(135deg, #74ebd5 0%, #acb6e5 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    padding: 20px;
+}
+
+.card{
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    width: 300px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.avatar{
+    width: 100%;
+    border-radius: 50%;
+    margin-bottom: 15px;
+}
+
+h1{
+    margin: 15px 0;
+}
+
+.title{
+    color: grey;
+    font-size: 16px;
+    margin: 5px 0;
+}
+
+.city{
+    font-size: 14px;
+    margin: 15px 0;
+}
+.socials{
+    margin-top: 15px;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.socials a {
+    text-decoration: none;
+    margin: 0 20px;
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    border-radius: 8px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.socials a:hover{
+    background-color: #dfe9f3;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.socials a img{
+    width: 24px;
+    margin: 0 5px;
+    transition: transform 0.3s;
+}
+
+.socials a:hover img{
+    transform: scale(1.2);
+}
+
+.description{
+    font-size: 14px;
+    color: #555;
+    margin: 20px 0;
+    line-height: 1.25;
+}
+
+@media (max-width: 400px) {
+    .card{
+        width: 90%;
+        padding: 20px;
+    }
+    
+    .socials a {
+        padding: 6px;
+    }
+
+    .description{
+        font-size: 13px;
+    }
+}
