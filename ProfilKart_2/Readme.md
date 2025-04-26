@@ -22,3 +22,4 @@ HTML ve CSS kullanılarak responsive (mobil uyumlu) şekilde geliştirilmiştir.
 - **profilkart.css** → Kartı stillendiren CSS
 
 ## 📸 Ekran Görüntüsü
+![image](https://github.com/user-attachments/assets/3f5eccd5-189a-406b-9f2b-7194fdade587)
