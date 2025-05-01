@@ -30,4 +30,4 @@ CSS, JavaScript ve temel DOM manipülasyonları ile hazırlanmış bu çalışma
   <img width="1504" alt="Ekran Resmi 2025-05-01 22 27 41" src="https://github.com/user-attachments/assets/66aa2c77-22a7-4cbd-97f1-ddf0f2eec7b9" />
 
 - Ekran Videosu
-https://github.com/user-attachments/assets/b574e0bf-7127-4551-89f5-9b5943728007
+  https://github.com/user-attachments/assets/b7de9879-d991-4883-96e1-315ede37f386
