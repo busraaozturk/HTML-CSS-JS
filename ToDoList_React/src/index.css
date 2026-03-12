@@ -1,0 +1,14 @@
+/* stylelint-disable */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* stylelint-enable */
+
+/* small conveniences for the project */
+html,body,#root{height:100%}
+body{background:white}
+
+/* small conveniences for the project */
+html,body,#root{height:100%}
+body{background:white}
+

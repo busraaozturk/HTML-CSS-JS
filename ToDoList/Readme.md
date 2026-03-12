@@ -11,9 +11,9 @@ Tamamen HTML + CSS (inline) + Vanilla JavaScript kullanılarak geliştirilmişti
 - Tamamlandı olarak işaretlenmesi
 - Silme işlemi
 - Görev düzenleme
-- Tamamlanan görevlerin listenin sonuna taşınması
+- Tamamlanan görevlerin listenin sonuna taşınması : Yapılabilir
 - Tamamlanan görevlerin üstünün çizilmesi
-- Kullanıcıların tamamlanan görevi tekrar bekleyen listeye döndürebilmesi
+- Kullanıcıların tamamlanan görevi tekrar bekleyen listeye döndürebilmesi : Yapılabilir
 
 ---
 
