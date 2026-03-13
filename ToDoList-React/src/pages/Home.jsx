@@ -4,8 +4,14 @@ import TodoList from '../components/TodoList';
 
 const Home = () => {
   // TODO: State'leri burada tanımla
+  const [task, setTask] = useState(''); // Yazılan Metni Tutacak State
 
-  // TODO: addTodo methodunu yaz
+  const handleAddClick = () => {
+    if (task.trim() === '') return; // Boş görev eklenmesini engelle
+
+    console.log('Yeni görev eklendi:', task);
+    setTask(''); // Ekleme sonrası inputu temizle
+  }
 
   // TODO: toggleTodo methodunu yaz
 
@@ -24,9 +30,12 @@ const Home = () => {
               type="text"
               placeholder="Yeni görev ekleyin..."
               className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={task}  // Inputun değerini state ile bağla
+              onChange={(e) => setTask(e.target.value)} // Input değiştiğinde state'i güncelle
             />
             <button
               className="btn-primary"
+              onClick={handleAddClick}  // Ekle butonuna tıklandığında handleAddClick fonksiyonunu çağır
             >
               Ekle
             </button>
