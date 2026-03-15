@@ -1,7 +1,7 @@
 import React from 'react';
 import TodoItem from './TodoItem';
 
-const TodoList = ({ todos, onToggle, onDelete }) => {
+const TodoList = ({ todos, onToggle, onDelete, onEdit }) => {
   if (todos.length === 0) {
     return (
       <div className="card text-center py-12">
@@ -18,6 +18,7 @@ const TodoList = ({ todos, onToggle, onDelete }) => {
           todo={todo}
           onToggle={onToggle}
           onDelete={onDelete}
+          onEdit={onEdit}
         />
       ))}
     </div>
