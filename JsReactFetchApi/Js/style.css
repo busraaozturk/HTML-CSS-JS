@@ -1,0 +1,41 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background-color: #f8f9fa;
+}
+
+h1 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+#status-message {
+    padding: 12px 24px;
+    font-size: 18px;
+    font-weight: 500;
+    color: #0d6efd;
+    border: 2px solid #0d6efd;
+    border-radius: 12px;
+    background-color: #fff;
+    margin: 20px 0;
+    display: none;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+#status-message.error {
+    color: #dc3545;
+    border-color: #dc3545;
+}
+
+#status-message.loading {
+    color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+#status-message:not(:empty) {
+    display: inline-block;
+}
