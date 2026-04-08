@@ -22,14 +22,16 @@ function upload(callback) {
 
 const progressBar = document.getElementById("progressBar");
 const progressText = document.getElementById("progressText");
-const startBtn = document.getElementById("startBtn");
 const resetBtn = document.getElementById("resetBtn");
 const fileInput = document.getElementById("fileInput");
 const fileInfoEl = document.getElementById("fileDetails");
 const filePreviewImg = document.getElementById("filePreview");
 const fileTypeIcon = document.getElementById("fileTypeIcon");
+const dropZone = document.getElementById("dropZone");
+
 let selectedFile = null;
 let fileObjectURL = null;
+let isUploading = false;    // Yükleme durumunu takip etmek için
 
 const formatBytes = (bytes) => {
     if (bytes === 0) return '0 B';
@@ -82,48 +84,44 @@ const showFileInfo = (file) => {
     }
 };
 
-fileInput.addEventListener("change", (e) => {
-    selectedFile = e.target.files[0] || null;
-    if (selectedFile) {
-        showFileInfo(selectedFile);
-        startBtn.disabled = false;
-    } else {
-        fileInfoEl.innerHTML = '';
-        startBtn.disabled = true;
-    }
-});
+// Yüklemeyi başlatan yeni ana fonksiyon
+const startUpload = () => {
+    if (!selectedFile || isUploading) return;
+    isUploading = true;
 
-startBtn.addEventListener("click", () => {
-    if (!selectedFile) {
-        progressText.innerText = "Lütfen önce bir dosya seçin.";
-        return;
-    }
-    startBtn.disabled = true;
+    // Yükleme sırasında sıfırla butonunu devre dışı bırak
+    resetBtn.disabled = true; 
+
+    // Barı başlangıç haline getir
+    progressBar.className = 'h-5 w-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 transition-all duration-500';
+    progressBar.style.width = '0%';
+    progressText.innerText = 'Yükleniyor...';
 
     upload((current, total) => {
         if (current === 'error') {
             progressBar.style.width = "100%";
             progressBar.className = 'h-5 bg-red-500 transition-all duration-500';
             progressText.innerText = "Yükleme başarısız!";
+            isUploading = false;
             return;
         }
 
         const percent = Math.floor((current / total) * 100);
-
         progressBar.style.width = percent + '%';
         progressText.innerText = '%' + percent;
 
-        // Glow effect while loading
+        // Yüklenirken parlama efekti (glow)
         if(percent < 100) {
             progressBar.classList.add('glow');
         }
 
-        // Success State
+        // Başarı Durumu
         if(percent === 100) {
             progressBar.classList.remove('glow');
             progressText.innerText = "Yükleme tamamlandı! 🎉";
+            isUploading = false;
 
-            // Confetti Animation
+            // Confetti Animasyonu
             confetti({
                 particleCount: 200,
                 spread: 100,
@@ -133,6 +131,17 @@ startBtn.addEventListener("click", () => {
             });
         }
     });
+
+};
+
+fileInput.addEventListener("change", (e) => {
+    selectedFile = e.target.files[0] || null;
+    if (selectedFile) {
+        showFileInfo(selectedFile);
+        startUpload(); // Dosya seçildiğinde otomatik olarak yüklemeye başla
+    } else {
+        fileInfoEl.innerHTML = '';
+    }
 });
 
 resetBtn.addEventListener("click", () => {
@@ -144,16 +153,14 @@ resetBtn.addEventListener("click", () => {
     fileTypeIcon.classList.add('hidden');
     fileInput.value = '';
     selectedFile = null;
+    isUploading = false; // Yükleme durumunu sıfırla
     if (fileObjectURL) {
         URL.revokeObjectURL(fileObjectURL);
         fileObjectURL = null;
     }
-    startBtn.disabled = false;
 });
 
 // Drag & Drop + Click-to-select Effect
-const dropZone = document.getElementById("dropZone");
-
 dropZone.addEventListener("click", () => {
     fileInput.click();
 });
@@ -167,17 +174,16 @@ dropZone.addEventListener("dragleave", () => {
     dropZone.classList.remove("border-blue-400");
 });
 
+// Sürükle bırak yapılınca otomatik başlar
 dropZone.addEventListener("drop", (e) => {
     e.preventDefault();
+
     dropZone.classList.remove("border-blue-400");
 
     const droppedFile = e.dataTransfer.files[0];
     if (droppedFile) {
         selectedFile = droppedFile;
         showFileInfo(selectedFile);
-        startBtn.disabled = false;
-
-        // Otomatik başlatmak isterseniz aşağıdaki satırın yorumunu kaldırın
-        // startBtn.click();
+        startUpload(); // Dosya bırakıldığında otomatik olarak yüklemeye başla
     }
 });
