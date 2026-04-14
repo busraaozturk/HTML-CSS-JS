@@ -1,12 +1,21 @@
-function upload(callback) {
+function upload(file, callback) {
     let current = 0;
-    const total = 10;
+    const total = Math.max(file?.size || 0, 1);
+
+    // Yaklasik 5 sn surede tamamlama hedefi (dosya boyutuna gore byte bazli ilerleme)
+    const tickMs = 100;
+    const targetDurationMs = 5000;
+    const steps = Math.max(Math.ceil(targetDurationMs / tickMs), 1);
+    const chunkSize = Math.max(Math.ceil(total / steps), 1);
+
+    // Eski davranistaki gibi hata simulasyonunu koru (upload basina %10)
+    const shouldFail = Math.random() < 0.1;
+    const failAt = shouldFail ? Math.max(Math.floor(total * (0.2 + Math.random() * 0.6)), 1) : -1;
 
     const interval = setInterval(() => {
-        current++;
+        current = Math.min(current + chunkSize, total);
 
-        // Random error simulation
-        if (Math.random() < 0.1) {
+        if (shouldFail && current >= failAt) {
             clearInterval(interval);
             callback('error');
             return;
@@ -14,10 +23,10 @@ function upload(callback) {
 
         callback(current, total);
 
-        if (current === total) {
+        if (current >= total) {
             clearInterval(interval);
         }
-    }, 500);
+    }, tickMs);
 }
 
 const progressBar = document.getElementById("progressBar");
@@ -30,8 +39,14 @@ const fileTypeIcon = document.getElementById("fileTypeIcon");
 const dropZone = document.getElementById("dropZone");
 
 let selectedFile = null;
+let selectedFiles = [];
 let fileObjectURL = null;
-let isUploading = false;    // Yükleme durumunu takip etmek için
+let isUploading = false;    // Yukleme durumunu takip etmek icin
+
+const setUploadingState = (isLoading) => {
+    isUploading = isLoading;
+    resetBtn.disabled = isLoading;
+};
 
 const formatBytes = (bytes) => {
     if (bytes === 0) return '0 B';
@@ -40,9 +55,10 @@ const formatBytes = (bytes) => {
     return `${(bytes / Math.pow(1024, i)).toFixed(2)} ${sizes[i]}`;
 };
 
-const showFileInfo = (file) => {
+const showFileInfo = (file, allFiles = [file]) => {
+    const totalBytes = allFiles.reduce((sum, f) => sum + (f?.size || 0), 0);
     const ext = file.name.split('.').pop().toLowerCase();
-    fileInfoEl.innerHTML = `Ad: ${file.name}<br>Boyut: ${formatBytes(file.size)}<br>Uzantı: .${ext}`;
+    fileInfoEl.innerHTML = `Dosya: ${allFiles.length}<br>Toplam Boyut: ${formatBytes(totalBytes)}<br>Ilk Dosya: ${file.name} (.${ext})`;
 
     // Temizle
     filePreviewImg.src = '';
@@ -84,44 +100,40 @@ const showFileInfo = (file) => {
     }
 };
 
-// Yüklemeyi başlatan yeni ana fonksiyon
+// Yuklemeyi baslatan ana fonksiyon
 const startUpload = () => {
-    if (!selectedFile || isUploading) return;
+    if (!selectedFiles.length || isUploading) return;
     isUploading = true;
 
-    // Yükleme sırasında sıfırla butonunu devre dışı bırak
-    resetBtn.disabled = true; 
+    // Yukleme sirasinda sifirla butonunu devre disi birak
+    setUploadingState(true);
 
-    // Barı başlangıç haline getir
+    // Bari baslangic haline getir
     progressBar.className = 'h-5 w-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 transition-all duration-500';
     progressBar.style.width = '0%';
-    progressText.innerText = 'Yükleniyor...';
+    progressText.innerText = 'Yukleniyor...';
 
-    upload((current, total) => {
-        if (current === 'error') {
-            progressBar.style.width = "100%";
-            progressBar.className = 'h-5 bg-red-500 transition-all duration-500';
-            progressText.innerText = "Yükleme başarısız!";
-            isUploading = false;
-            return;
-        }
+    const totalBytes = Math.max(selectedFiles.reduce((sum, file) => sum + (file?.size || 0), 0), 1);
+    let uploadedBytes = 0;
+    let fileIndex = 0;
 
-        const percent = Math.floor((current / total) * 100);
+    const updateOverallProgress = (currentFileBytes) => {
+        const loaded = Math.min(uploadedBytes + currentFileBytes, totalBytes);
+        const percent = Math.min(100, Math.floor((loaded / totalBytes) * 100));
         progressBar.style.width = percent + '%';
         progressText.innerText = '%' + percent;
 
-        // Yüklenirken parlama efekti (glow)
-        if(percent < 100) {
+        // Yuklenirken parlama efekti
+        if (percent < 100) {
             progressBar.classList.add('glow');
         }
 
-        // Başarı Durumu
-        if(percent === 100) {
+        if (percent === 100) {
             progressBar.classList.remove('glow');
-            progressText.innerText = "Yükleme tamamlandı! 🎉";
+            progressText.innerText = "Yukleme tamamlandi! 🎉";
             isUploading = false;
+            setUploadingState(false);
 
-            // Confetti Animasyonu
             confetti({
                 particleCount: 200,
                 spread: 100,
@@ -130,15 +142,45 @@ const startUpload = () => {
                 origin: { y: 0.6 }
             });
         }
-    });
+    };
 
+    const uploadNextFile = () => {
+        if (fileIndex >= selectedFiles.length) {
+            updateOverallProgress(totalBytes);
+            return;
+        }
+
+        const file = selectedFiles[fileIndex];
+        upload(file, (current, total) => {
+            if (current === 'error') {
+                progressBar.style.width = "100%";
+                progressBar.className = 'h-5 bg-red-500 transition-all duration-500';
+                progressText.innerText = "Yukleme basarisiz!";
+                isUploading = false;
+                setUploadingState(false);
+                return;
+            }
+
+            updateOverallProgress(current);
+
+            if (current >= total) {
+                uploadedBytes += total;
+                fileIndex += 1;
+                uploadNextFile();
+            }
+        });
+    };
+
+    uploadNextFile();
 };
 
 fileInput.addEventListener("change", (e) => {
-    selectedFile = e.target.files[0] || null;
+    selectedFiles = Array.from(e.target.files || []);
+    selectedFile = selectedFiles[0] || null;
+
     if (selectedFile) {
-        showFileInfo(selectedFile);
-        startUpload(); // Dosya seçildiğinde otomatik olarak yüklemeye başla
+        showFileInfo(selectedFile, selectedFiles);
+        startUpload(); // Dosya secildiginde otomatik olarak yuklemeye basla
     } else {
         fileInfoEl.innerHTML = '';
     }
@@ -153,14 +195,16 @@ resetBtn.addEventListener("click", () => {
     fileTypeIcon.classList.add('hidden');
     fileInput.value = '';
     selectedFile = null;
-    isUploading = false; // Yükleme durumunu sıfırla
+    selectedFiles = [];
+    isUploading = false;
+
     if (fileObjectURL) {
         URL.revokeObjectURL(fileObjectURL);
         fileObjectURL = null;
     }
 });
 
-// Drag & Drop + Click-to-select Effect
+// Drag & Drop + Click-to-select
 dropZone.addEventListener("click", () => {
     fileInput.click();
 });
@@ -174,16 +218,16 @@ dropZone.addEventListener("dragleave", () => {
     dropZone.classList.remove("border-blue-400");
 });
 
-// Sürükle bırak yapılınca otomatik başlar
+// Surukle birak yapilinca otomatik baslar
 dropZone.addEventListener("drop", (e) => {
     e.preventDefault();
-
     dropZone.classList.remove("border-blue-400");
 
-    const droppedFile = e.dataTransfer.files[0];
-    if (droppedFile) {
-        selectedFile = droppedFile;
-        showFileInfo(selectedFile);
-        startUpload(); // Dosya bırakıldığında otomatik olarak yüklemeye başla
+    selectedFiles = Array.from(e.dataTransfer.files || []);
+    selectedFile = selectedFiles[0] || null;
+
+    if (selectedFile) {
+        showFileInfo(selectedFile, selectedFiles);
+        startUpload(); // Dosya birakildiginda otomatik olarak yuklemeye basla
     }
 });
