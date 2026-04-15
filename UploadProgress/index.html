@@ -20,15 +20,15 @@
 
         <!-- Drag & Drop veya Dosya Seçerek Yükleyin -->
         <input type="file" id="fileInput" class="hidden" multiple />
-        <div id="dropZone" class="border-2 border-dashed border-gray-500 rounded-2xl p-6 mb-2 hover:border-blue-400 transition cursor-pointer">
-            <p class="text-sm text-gray-300">Dosyanı buraya sürükle veya tıkla</p>
+        <div id="dropZone" class="border-2 border-dashed border-gray-500 rounded-2xl p-6 mb-4 hover:border-blue-400 transition cursor-pointer">
+            <p class="text-sm text-gray-300">Dosyaları buraya sürükle veya tıkla</p>
         </div>
         <div id="fileRows" class="flex gap-3 items-center justify-between text-left mb-4">
-            <div id="fileDetails" class="text-sm text-gray-300 min-h-[3rem] w-2/3"></div>
-            <div id="filePreviewBox" class="flex items-center justify-center gap-2 w-1/3">
+            <div id="fileDetails" class="text-sm text-gray-300 min-h-[3rem] w-full"></div>
+            <!-- <div id="filePreviewBox" class="flex items-center justify-center gap-2 w-1/3">
                 <img id="filePreview" class="max-h-24 rounded-lg hidden" alt="Önizleme" />
                 <div id="fileTypeIcon" class="text-4xl hidden"></div>
-            </div>
+            </div> -->
         </div>
 
         <!-- Progress Container -->
@@ -43,6 +43,9 @@
         <div class="flex gap-3 justify-center">
             <button id="resetBtn" class="bg-gray-600 px-4 py-2 rounded-xl hover:bg-gray-700 transition w-full">
                 Sıfırla
+            </button>
+            <button id="pauseBtn" class="bg-blue-600 px-4 py-2 rounded-xl hover:bg-blue-700 transition w-full hidden">
+                Durdur
             </button>
         </div>
     </div>

@@ -1,4 +1,4 @@
-function upload(file, callback) {
+﻿function upload(file, callback) {
     let current = 0;
     const total = Math.max(file?.size || 0, 1);
 
@@ -13,6 +13,13 @@ function upload(file, callback) {
     const failAt = shouldFail ? Math.max(Math.floor(total * (0.2 + Math.random() * 0.6)), 1) : -1;
 
     const interval = setInterval(() => {
+        if (!isUploading) {
+            clearInterval(interval);
+            return;
+        }
+        
+        if (isPaused) return;  // Pause durumunda devam etme
+        
         current = Math.min(current + chunkSize, total);
 
         if (shouldFail && current >= failAt) {
@@ -32,20 +39,23 @@ function upload(file, callback) {
 const progressBar = document.getElementById("progressBar");
 const progressText = document.getElementById("progressText");
 const resetBtn = document.getElementById("resetBtn");
+const pauseBtn = document.getElementById("pauseBtn");
 const fileInput = document.getElementById("fileInput");
 const fileInfoEl = document.getElementById("fileDetails");
-const filePreviewImg = document.getElementById("filePreview");
-const fileTypeIcon = document.getElementById("fileTypeIcon");
 const dropZone = document.getElementById("dropZone");
 
 let selectedFile = null;
 let selectedFiles = [];
+let selectedFilesStatus = {}; // Dosya durumlarını takip etmek için
+let uploadIntervals = {}; // Her dosyanin upload interval'ini tut
 let fileObjectURL = null;
 let isUploading = false;    // Yukleme durumunu takip etmek icin
+let isPaused = false;       // Genel pause durumu
 
 const setUploadingState = (isLoading) => {
     isUploading = isLoading;
-    resetBtn.disabled = isLoading;
+    fileInput.disabled = isLoading;
+    pauseBtn.classList.toggle('hidden', !isLoading);
 };
 
 const formatBytes = (bytes) => {
@@ -55,48 +65,94 @@ const formatBytes = (bytes) => {
     return `${(bytes / Math.pow(1024, i)).toFixed(2)} ${sizes[i]}`;
 };
 
-const showFileInfo = (file, allFiles = [file]) => {
-    const totalBytes = allFiles.reduce((sum, f) => sum + (f?.size || 0), 0);
+const getPreviewHTML = (file) => {
     const ext = file.name.split('.').pop().toLowerCase();
-    fileInfoEl.innerHTML = `Dosya: ${allFiles.length}<br>Toplam Boyut: ${formatBytes(totalBytes)}<br>Ilk Dosya: ${file.name} (.${ext})`;
-
-    // Temizle
-    filePreviewImg.src = '';
-    filePreviewImg.classList.add('hidden');
-    fileTypeIcon.classList.add('hidden');
-
     const imageTypes = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg'];
     const docTypes = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'rtf'];
-
+    const audioTypes = ['mp3', 'wav', 'ogg', 'm4a', 'flac', 'aac'];
+    const videoTypes = ['mp4', 'avi', 'mov', 'mkv', 'wmv'];
+    
+    let previewHTML = `<div class="file-preview">`;
+    
     if (imageTypes.includes(ext)) {
-        if (fileObjectURL) {
-            URL.revokeObjectURL(fileObjectURL);
-        }
-        fileObjectURL = URL.createObjectURL(file);
-        filePreviewImg.src = fileObjectURL;
-        filePreviewImg.classList.remove('hidden');
-        fileTypeIcon.classList.add('hidden');
+        const url = URL.createObjectURL(file);
+        previewHTML += `<img src="${url}" alt="preview">`;
+    } else if (audioTypes.includes(ext)) {
+        previewHTML += `<div class="file-preview-icon">🎵</div>`;
+    } else if (videoTypes.includes(ext)) {
+        previewHTML += `<div class="file-preview-icon">🎬</div>`;
     } else if (docTypes.includes(ext)) {
-        filePreviewImg.classList.add('hidden');
-        fileTypeIcon.classList.remove('hidden');
-
-        const iconMap = {
-            pdf: '📄',
-            doc: '📝',
-            docx: '📝',
-            xls: '📊',
-            xlsx: '📊',
-            ppt: '📈',
-            pptx: '📈',
-            txt: '📃',
-            rtf: '📄'
-        };
-
-        fileTypeIcon.innerText = iconMap[ext] || '📁';
+        const iconMap = { pdf: '📄', doc: '📝', docx: '📝', xls: '📊', xlsx: '📊', ppt: '📈', pptx: '📈', txt: '📃', rtf: '📄' };
+        previewHTML += `<div class="file-preview-icon">${iconMap[ext] || '📁'}</div>`;
     } else {
-        filePreviewImg.classList.add('hidden');
-        fileTypeIcon.classList.remove('hidden');
-        fileTypeIcon.innerText = '📁';
+        previewHTML += `<div class="file-preview-icon">📁</div>`;
+    }
+    
+    previewHTML += `</div>`;
+    return previewHTML;
+};
+
+// Dosya listesini durumla birlikte güncelle
+const updateFileListUI = (allFiles) => {
+    const totalBytes = allFiles.reduce((sum, f) => sum + (f?.size || 0), 0);
+    const completed = Object.values(selectedFilesStatus).filter(s => s === 'completed').length;
+    const errors = Object.values(selectedFilesStatus).filter(s => s === 'error').length;
+    
+    let fileListHTML = `<div class="file-list">`;
+    allFiles.forEach((f, idx) => {
+        const size = formatBytes(f.size);
+        const preview = getPreviewHTML(f);
+        const status = selectedFilesStatus[idx] || 'waiting';
+        const rowClass = status === 'error' ? 'file-item-error' : '';
+        
+        let statusIconHtml = '';
+        if (status === 'uploading') {
+            statusIconHtml = `<div class="file-status">
+                <svg class="spinner" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="10" stroke="rgba(99, 102, 241, 0.3)" stroke-width="2"/>
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" stroke="#6366f1" stroke-width="2" stroke-linecap="round" fill="none" stroke-dasharray="15.7 62.8"/>
+                </svg>
+            </div>`;
+        } else if (status === 'completed') {
+            statusIconHtml = `<div class="file-status">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="10" stroke="#10b981" stroke-width="2"/>
+                    <path d="M8 12l2 2 6-6" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>`;
+        } else if (status === 'error') {
+            statusIconHtml = `<div class="file-status">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="10" stroke="#ef4444" stroke-width="2"/>
+                    <path d="M15 9L9 15M9 9L15 15" stroke="#ef4444" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </div>`;
+        }
+        
+        fileListHTML += `<div class="file-item-with-preview ${rowClass}">${preview}
+        <div>
+        <div class="file-name">${f.name}</div>
+        <div class="file-size">${size}</div>
+        </div>${statusIconHtml}</div>`;
+    });
+    fileListHTML += `</div>`;
+    fileInfoEl.innerHTML = `<div style="margin-bottom: 0.5rem; font-weight: 500;">Toplam: ${allFiles.length} dosya (${formatBytes(totalBytes)}) | ✅ ${completed} | ❌ ${errors}</div>` + fileListHTML;
+};
+
+const showFileInfo = (file, allFiles = [file]) => {
+    const ext = file.name.split('.').pop().toLowerCase();
+    
+    // Dosya durumlarını başlat
+    selectedFilesStatus = {};
+    allFiles.forEach((f, idx) => {
+        selectedFilesStatus[idx] = 'waiting';
+    });
+    
+    // Birden fazla dosya varsa listesini göster
+    if (allFiles.length > 1) {
+        updateFileListUI(allFiles);
+    } else {
+        fileInfoEl.innerHTML = `Dosya: 1<br>Boyut: ${formatBytes(file.size)}<br>${file.name}`;
     }
 };
 
@@ -120,15 +176,16 @@ const startUpload = () => {
     const updateOverallProgress = (currentFileBytes) => {
         const loaded = Math.min(uploadedBytes + currentFileBytes, totalBytes);
         const percent = Math.min(100, Math.floor((loaded / totalBytes) * 100));
-        progressBar.style.width = percent + '%';
-        progressText.innerText = '%' + percent;
+        const safepercent = isNaN(percent) ? 0 : percent;
+        progressBar.style.width = safepercent + '%';
+        progressText.innerText = '%' + safepercent;
 
         // Yuklenirken parlama efekti
-        if (percent < 100) {
+        if (safepercent < 100) {
             progressBar.classList.add('glow');
         }
 
-        if (percent === 100) {
+        if (safepercent === 100) {
             progressBar.classList.remove('glow');
             progressText.innerText = "Yukleme tamamlandi! 🎉";
             isUploading = false;
@@ -151,24 +208,32 @@ const startUpload = () => {
         }
 
         const file = selectedFiles[fileIndex];
-        upload(file, (current, total) => {
+        selectedFilesStatus[fileIndex] = 'uploading';
+        if (selectedFiles.length > 1) updateFileListUI(selectedFiles);
+        
+        const interval = upload(file, (current, total) => {
             if (current === 'error') {
-                progressBar.style.width = "100%";
-                progressBar.className = 'h-5 bg-red-500 transition-all duration-500';
-                progressText.innerText = "Yukleme basarisiz!";
-                isUploading = false;
-                setUploadingState(false);
+                selectedFilesStatus[fileIndex] = 'error';
+                uploadedBytes += total;
+                updateOverallProgress(total);
+                if (selectedFiles.length > 1) updateFileListUI(selectedFiles);
+                fileIndex += 1;
+                uploadNextFile();
                 return;
             }
 
             updateOverallProgress(current);
 
             if (current >= total) {
+                selectedFilesStatus[fileIndex] = 'completed';
+                if (selectedFiles.length > 1) updateFileListUI(selectedFiles);
                 uploadedBytes += total;
                 fileIndex += 1;
                 uploadNextFile();
             }
         });
+        
+        uploadIntervals[fileIndex] = interval;
     };
 
     uploadNextFile();
@@ -187,20 +252,47 @@ fileInput.addEventListener("change", (e) => {
 });
 
 resetBtn.addEventListener("click", () => {
+    // Tüm aktif interval'ları temizle
+    Object.values(uploadIntervals).forEach(interval => clearInterval(interval));
+    
     progressBar.style.width = "0%";
     progressBar.className = 'h-5 w-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 transition-all duration-500';
     progressText.innerText = '%0';
     fileInfoEl.innerHTML = '';
-    filePreviewImg.classList.add('hidden');
-    fileTypeIcon.classList.add('hidden');
     fileInput.value = '';
+    fileInput.disabled = false;
     selectedFile = null;
     selectedFiles = [];
+    selectedFilesStatus = {};
+    uploadIntervals = {};
     isUploading = false;
+    isPaused = false;
+    pauseBtn.textContent = 'Durdur';
+    pauseBtn.classList.add('hidden');
 
     if (fileObjectURL) {
         URL.revokeObjectURL(fileObjectURL);
         fileObjectURL = null;
+    }
+});
+
+pauseBtn.addEventListener("click", () => {
+    if (!isUploading) return;
+    
+    isPaused = !isPaused;
+    pauseBtn.textContent = isPaused ? 'Devam Et' : 'Durdur';
+    
+    const spinners = document.querySelectorAll('.spinner');
+    
+    if (isPaused) {
+        progressBar.classList.remove('glow');
+        spinners.forEach(spinner => spinner.style.animationPlayState = 'paused');
+    } else {
+        const percent = parseInt(progressText.innerText.substring(1)) || 0;
+        if (percent < 100) {
+            progressBar.classList.add('glow');
+        }
+        spinners.forEach(spinner => spinner.style.animationPlayState = 'running');
     }
 });
 
