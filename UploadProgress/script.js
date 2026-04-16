@@ -2,9 +2,12 @@
     let current = 0;
     const total = Math.max(file?.size || 0, 1);
 
-    // Yaklasik 5 sn surede tamamlama hedefi (dosya boyutuna gore byte bazli ilerleme)
+    // Gerçekçi yükleme hızı simülasyonu: 10MB/s
+    const UPLOAD_SPEED_MBPS = 10;
+    const UPLOAD_SPEED_BPS = UPLOAD_SPEED_MBPS * 1024 * 1024; // bytes/s cinsinden
+    const targetDurationMs = (total / UPLOAD_SPEED_BPS) * 1000; // Dosya boyutuna göre süre hesapla
+    
     const tickMs = 100;
-    const targetDurationMs = 5000;
     const steps = Math.max(Math.ceil(targetDurationMs / tickMs), 1);
     const chunkSize = Math.max(Math.ceil(total / steps), 1);
 
@@ -42,6 +45,7 @@ const resetBtn = document.getElementById("resetBtn");
 const pauseBtn = document.getElementById("pauseBtn");
 const fileInput = document.getElementById("fileInput");
 const fileInfoEl = document.getElementById("fileDetails");
+const previewBox = document.getElementById("filePreviewBox");
 const dropZone = document.getElementById("dropZone");
 
 let selectedFile = null;
@@ -148,11 +152,18 @@ const showFileInfo = (file, allFiles = [file]) => {
         selectedFilesStatus[idx] = 'waiting';
     });
     
+    // Div'i görünür yap
+    fileInfoEl.classList.remove('hidden');
+    
     // Birden fazla dosya varsa listesini göster
     if (allFiles.length > 1) {
         updateFileListUI(allFiles);
+        previewBox.classList.add('hidden');
     } else {
         fileInfoEl.innerHTML = `Dosya: 1<br>Boyut: ${formatBytes(file.size)}<br>${file.name}`;
+        // Tekli dosya için preview göster
+        previewBox.classList.remove('hidden');
+        previewBox.innerHTML = getPreviewHTML(file);
     }
 };
 
@@ -213,15 +224,16 @@ const startUpload = () => {
         
         const interval = upload(file, (current, total) => {
             if (current === 'error') {
+                // Hata durumunda: hatalı dosya işaretlensin ama progress bar güncellenmemesin
                 selectedFilesStatus[fileIndex] = 'error';
-                uploadedBytes += total;
-                updateOverallProgress(total);
                 if (selectedFiles.length > 1) updateFileListUI(selectedFiles);
+                // Diğer dosyalara geç (bu dosyanın byte'ları sayılmaz)
                 fileIndex += 1;
                 uploadNextFile();
                 return;
             }
 
+            // Dosya yüklenirken progress bar'ı güncelle (bu dosyada ne kadar yüklendiği)
             updateOverallProgress(current);
 
             if (current >= total) {
@@ -259,6 +271,9 @@ resetBtn.addEventListener("click", () => {
     progressBar.className = 'h-5 w-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 transition-all duration-500';
     progressText.innerText = '%0';
     fileInfoEl.innerHTML = '';
+    fileInfoEl.classList.add('hidden');
+    previewBox.innerHTML = '';
+    previewBox.classList.add('hidden');
     fileInput.value = '';
     fileInput.disabled = false;
     selectedFile = null;

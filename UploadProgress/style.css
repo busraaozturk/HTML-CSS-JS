@@ -99,6 +99,16 @@
   justify-content: center;
 }
 
+#filePreviewBox .file-preview {
+  width: 100px;
+  height: 100px;
+  border-radius: 0.5rem;
+}
+
+#filePreviewBox .file-preview-icon {
+  font-size: 3rem;
+}
+
 .spinner {
   width: 24px;
   height: 24px;
