@@ -74,8 +74,6 @@ Modern ve görsel açıdan zengin bir dosya yükleme simülasyonu arayüzü. Ger
 - ✅ **Responsive Tasarım**: Mobil, tablet ve desktop uyumlu
 - ✅ **Tailwind CSS**: Hızlı ve tutarlı styling
 
----
-
 ## 🛠️ Teknolojiler
 
 | Teknoloji | Amaç | Versiyon |
@@ -86,7 +84,6 @@ Modern ve görsel açıdan zengin bir dosya yükleme simülasyonu arayüzü. Ger
 | **Tailwind CSS** | Utility-first CSS framework | v4 (CDN) |
 | **Canvas Confetti** | Konfeti animasyonu | v1.6.0 (CDN) |
 
----
 
 ## 📁 Proje Yapısı
 
@@ -171,8 +168,6 @@ isPaused // Pause/Resume durumu
 - `dropZone.addEventListener('dragover')`: Sürükleme üzerinde
 - `dropZone.addEventListener('dragleave')`: Sürükleme dışarıda
 - `dropZone.addEventListener('click')`: Tıklama
-
----
 
 ## 🚀 Kullanım Kılavuzu
 
@@ -347,4 +342,3 @@ confetti({
 - Ağ hızı sabit (10MB/s)
 - Hata tamamen random
 - Cache özellikleri yok
-

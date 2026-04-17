@@ -1,4 +1,5 @@
-﻿function upload(file, callback) {
+﻿// Dosya yükleme simülasyonu için gerçekçi bir hız ve hata senaryosu ekleyelim
+function upload(file, callback) {
     let current = 0;
     const total = Math.max(file?.size || 0, 1);
 
