@@ -97,7 +97,7 @@ const getPreviewHTML = (file) => {
     return previewHTML;
 };
 
-// Dosya listesini durumla birlikte güncelle
+// Dosya listesini durumla birlikte güncelleyecek fonksiyon
 const updateFileListUI = (allFiles) => {
     const totalBytes = allFiles.reduce((sum, f) => sum + (f?.size || 0), 0);
     const completed = Object.values(selectedFilesStatus).filter(s => s === 'completed').length;
@@ -145,9 +145,8 @@ const updateFileListUI = (allFiles) => {
 };
 
 const showFileInfo = (file, allFiles = [file]) => {
-    const ext = file.name.split('.').pop().toLowerCase();
     
-    // Dosya durumlarını başlat
+    // Dosya durumlarını başlat ve takip etmek için bir nesne oluştur
     selectedFilesStatus = {};
     allFiles.forEach((f, idx) => {
         selectedFilesStatus[idx] = 'waiting';
@@ -176,7 +175,7 @@ const startUpload = () => {
     // Yukleme sirasinda sifirla butonunu devre disi birak
     setUploadingState(true);
 
-    // Bari baslangic haline getir
+    // Barı baslangic haline getir
     progressBar.className = 'h-5 w-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 transition-all duration-500';
     progressBar.style.width = '0%';
     progressText.innerText = 'Yukleniyor...';
