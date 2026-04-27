@@ -227,12 +227,16 @@ Amaç :
 - Magic number'ları kaldırmak
 - Kodun okunabilirliğini artırmak
 - Tek noktadan yönetim sağlamak
-
 Sonuç olarak `constants.js` dosyası :
 - Uygulamanın **konfigürasyon merkezi**
 - Dosya tiplerini sınıflandırır
 - Upload simülasyonunu kontrol eder
 - Kodun daha temiz, okunabilir ve sürdürülebilir olmasını sağlar
+Sabit değerler ve ayarlar:
+- Tip listeleri: `IMAGE_TYPES`, `DOC_TYPES`, `AUDIO_TYPES`, `VIDEO_TYPES`
+- Simulasyon tuning:
+  - `UPLOAD_SPEED_MBPS`
+  - `MIN_FILE_DURATION_MS`
 
 ### Dosya Tipleri (File Type Definitions)
 ```
@@ -246,6 +250,9 @@ Bu yapı sayesinde:
 - Dosya tipine göre farklı UI gösterilebilir
 - Kod içinde `if (ext === "jpg" || ext === "png")` gibi karmaşa olmaz
 - Yeni tip eklemek kolay olur
+**Not:**
+- Dosya uzantısı (ext) bu listelerle karşılaştırılır.
+- Bu nedenle uzantının küçük harf (lowercase) olması gerekir.
 
 ### IMAGE_TYPES
 ```
@@ -256,11 +263,11 @@ Bu yapı sayesinde:
 - Görsel dosyaları belirler
 - Kullanım yeri :
   - Preview gösterme (`FilePreview`)
-  - `URL.createObjectURL` ile görsel oluşturma
+  - `URL.createObjectURL` ile geçici preview URL oluşturma
 
 ### DOC_TYPES
 - Doküman dosyalarını tanımlar
-- Kullanım senaryosu : 
+- Kullanım : 
   - İkon gösterimi (PDF icon vs.)
   - Preview yerine farklı UI
 
@@ -270,12 +277,12 @@ Bu yapı sayesinde:
   - Farklı preview türleri
   - İleride player eklenebilir
 
-### Simülasyon Ayarları (Upload Tuning)09+9
+### Simülasyon Ayarları (Upload Tuning)
 ```
   export const UPLOAD_SPEED_MBPS = 2;
   export const MIN_FILE_DURATION_MS = 2000;
 ```
-Bu kısım **upload simülasyonunu davranışını kontrol eder.**
+Bu kısım **upload simülasyonunun davranışını kontrol eder.**
 
 ###  `UPLOAD_SPEED_MBPS`
 - Upload hızını belirler (MB/s cinsinden)
@@ -285,7 +292,9 @@ Bu kısım **upload simülasyonunu davranışını kontrol eder.**
   2 MB/s → daha yavaş, kullanıcı progress’i görür  
   10 MB/s → çok hızlı, UX kötü olur
 ```
-- Kullanıcı 'Durdur' butonuna basabilsin diye yavaşlatılmış
+Not:
+- Varsayılan (vanilla JS versiyonunda) değer 10 MB/s idi.
+- Kullanıcı deneyimini iyileştirmek ve “Durdur” butonunun kullanılabilmesi için düşürülmüştür.
 
 ### `MIN_FILE_DURATION_MS`
 - Çok küçük dosyaların bile minimum yükleme süresi
@@ -304,18 +313,13 @@ Böylece:
 - Kullanıcı deneyimi iyileşir
 
 
-
-Sabit değerler ve ayarlar:
-
-- Tip listeleri: `IMAGE_TYPES`, `DOC_TYPES`, `AUDIO_TYPES`, `VIDEO_TYPES`
-- Simulasyon tuning:
-  - `UPLOAD_SPEED_MBPS`
-  - `MIN_FILE_DURATION_MS`
-
-### 3) `utils.js`
-
-Ortak helper + simulasyon motoru:
-
+## 3) `utils.js`
+Bu dosya uygulama içinde tekrar kullanılan **yardımcı fonksiyonları (helpers)** ve upload sürecini yöneten **simülasyon motorunu** içerir.
+Amaç : 
+- Tekrar eden işlemleri merkezi hale getirmek
+- Kodun okunabilirliğini artırmak
+- UI ile iş mantığını ayırmak **(separation of concerns)**
+İçerdiği Fonksiyonlar :
 - `formatBytes(bytes)`
 - `getExt(fileName)`
 - `getDocIcon(ext)` (ASCII etiketler: PDF/DOCX vb.)
@@ -327,24 +331,443 @@ Ortak helper + simulasyon motoru:
 
 Bu fonksiyon UI bilmez; UI sadece event alır ve state günceller.
 
-### 4) `HeaderIcon.jsx`
+### `formatBytes(bytes)`
+```
+  export function formatBytes(bytes) {
+    if (!bytes) return "0 B";
+    const sizes = ["B", "KB", "MB", "GB", "TB"];
+    const index = Math.floor(Math.log(bytes) / Math.log(1024));
+    return `${(bytes / Math.pow(1024, index)).toFixed(2)} ${sizes[index]}`;
+  }
+```
+- Dosya boyutunu **okunabilir formata çevirir.**
+**Örnek:**
+```
+  1024 -> 1.00KB
+  1048576 -> 1.00MB
+```
+**Nasıl Çlışır?**
+- `Math.log` ile uygun birim (KB, MB vs.) bulunur
+- 1024 tabanına göre hesaplanır
+- `toFixed(2)` ile 2 ondalık basamak gösterilir
 
-Başlıktaki SVG ikon. Ana dosyanın JSX kalabalığını azaltır.
+### `getExt(fileName)`
+```
+  export function getExt(fileName) {
+    const parts = String(fileName || "").split(".");
+    return (parts[parts.length - 1] || "").toLowerCase();
+  }
+```
+- Dosya adından **uzantıyı (extension)** çıkarır.
+**Örnek :**
+```
+  "photo.PNG" → "png"
+  "file.pdf" → "pdf"
+```
+**Neden Önemli?**
+- `constants.js` içindeki tip listeleri ile karşılaştırma yapılır
+- Küçük harfe çevirerek (`toLowerCase`) eşleşme garantilenir
 
-### 5) `DropZone.jsx`
+### `getDocIcon(ext)`
+```
+  export function getDocIcon(ext) {
+    const iconMap = {
+      pdf: "PDF",
+      doc: "DOC",
+      docx: "DOCX",
+      xls: "XLS",
+      xlsx: "XLSX",
+      ppt: "PPT",
+      pptx: "PPTX",
+      txt: "TXT",
+      rtf: "RTF",
+    };
+    return iconMap[ext] || "FILE";
+  }
+```
+- Doküman dosyaları için **ikon yerine metin etiketi üretir.**
+**Örnek:**
+```
+  pdf → "PDF"
+  docx → "DOCX"
+  unknown → "FILE"
+```
+**Neden Önemli**
+- UI'da hızlı ve sade gösterim sağlar
+- Gerçek ikon kullanmadan fallback çözüm sunar
 
-Drag&drop ve click-to-select alanı.
+### `createUploadTicker(file,ctx)`
+```
+  export function createUploadTicker(file, { isUploadingRef, isPausedRef, onTick })
+```
+- Bu fonksiyon **upload simülasyonunun motorudur.**
+**Ne Yapar?**
+- Upload sürecini **setInterval ile simüle eder.**
+- Belirli aralıklarla (`100ms`) progress üretir
+- Pause / resume destekler
+- Rastgele hata simülasyonu yapar
+- UI’a event gönderir `(onTick)`
 
-- `disabled` ile upload 7sırasında tekrar seçim engellenir
-- `isDragOver` ile border rengi değişir
-- `onDrop` ile `FileList` + upload otomatik başlar
+**ÇALIŞMA MANTIĞI**
+- **Toplam Boyut**
+```
+  const total = Math.max(file?.size || 0, 1);
+```
+0 olmasını engeller
 
-### 6) `FileList.jsx`
+- **Upload Süresi Hesaplama**
+```
+  const uploadSpeedBps = UPLOAD_SPEED_MBPS * 1024 * 1024;
+  const computedDurationMs = (total / uploadSpeedBps) * 1000;
+  const targetDurationMs = Math.max(computedDurationMs, MIN_FILE_DURATION_MS);
+```
+Süre = dosya boyutu / hız
+Ama minimum süre garanti edilir
 
-Multi-file list render.
+- **Parçalara bölme (chunk logic)**
+```
+  const tickMs = 100;
+  const steps = Math.ceil(targetDurationMs / tickMs);
+  const chunkSize = Math.ceil(total / steps);
+```
+Her 100ms'de:
+  - Ne kadar byte yüklenecek hesaplanır.
 
-- Üst satır: toplam dosya / toplam boyut / OK-ERR sayısı
-- Her satır: preview + ad/boyut + status icon
+- **Hata Simülasyonu**
+```
+  const shouldFail = Math.random() < 0.1;
+```
+%10 ihtimalle hata
+```
+  const failAt = total * (0.2 - 0.8 arası)
+```
+%20 - %80 arasında bir noktada fail olur
+
+- **Interval Döngüsü**
+```
+  const intervalId = setInterval(() => {
+```
+Her tick'te:
+- Upload Durdu Mu?
+```
+  if (!isUploadingRef.current)
+```
+- Pause Mu?
+```
+  if (isPausedRef.current) return;
+```
+- Progress Artır:
+```
+  current += chunkSize;
+```
+
+### Hata Durumu
+```
+  onTick({ kind: "error" });
+```
+
+### Progress Durumu
+```
+  onTick({ kind: "progress", current, total });
+```
+
+### Tamamlanma
+```
+  if(current >= total) clearInterval(intervalId);
+``` 
+
+### Return Değeri
+```
+  return intervalId;
+```
+- Parent component bu ID'yi saklar.
+- Gerekirse `clearInterval` ile durdurur
+
+### Veri Akışı
+createUploadTicker -> onTick(event) -> UploadProgress state günceller -> UI değişir
+
+## 4) `HeaderIcon.jsx`
+
+Bu component, upload ekranının üst kısmında görünen **ikonu** render eder.
+Amaç : 
+- UI’ya görsel kimlik kazandırmak
+- Başlık alanını desteklemek
+- Harici asset kullanmadan bağımsız bir yapı sağlamak
+
+### Component Yapısı
+```
+  export default function HeaderIcon() {
+    return (
+      <svg>...</svg>
+    );
+  }
+```
+- Basit bir **stateless (durumsuz)** UI componentidir.
+- Herhangi bir `state` veya `props` içermez.
+
+## 5) `DropZone.jsx`
+
+Bu component, kullanıcıların dosya seçmesini sağlayan drag & drop + click-to-select alanıdır.
+Amaç:
+- Kullanıcıya modern ve kolay bir dosya seçme deneyimi sunmak
+- Hem sürükle-bırak hem de tıklama ile dosya seçimini desteklemek
+- UI ve event yönetimini ana componentten ayırmak
+
+### Component Yapısı & Tipi
+```
+  export default function Dropzone({ ...props })
+```
+Aldığı props:
+- disabled
+- isDragOver
+- onPickFilesClick
+- onDragOver
+- onDragLeave
+- onDrop
+Bu component **state tutmaz**, sadece dışarıdan gelen props ile çalışır.
+
+**Component Tipi**
+Bu bir:
+- Presentational Component (UI)
+- Controlled Component (davranışı parent yönetir)
+
+### Click-to-select Mekanizması
+```
+  onClick={onPickFilesClick}
+```
+Kullanıcı alana tıkladığında:
+
+  DropZone -> onPickFilesClick -> input.click()
+
+- Hidden input tetiklenir
+- Dosya seçme penceresi açılır
+
+### Keyboard Accessibility
+```
+  role="button"
+  tabIndex={0}
+```
+Bu sayede : 
+- Div, button gibi davranır
+- Klavye ile seçilebilir
+```
+  onKeyDown={(e) => {
+    if (e.key === "Enter" || e.key === " ") onPickFilesClick();
+  }}
+```
+Kullanıcı :
+- Enter veya space tuşuna basarsa -> aynı click davranışı çalışır
+- Accessibility (erişilebilirlik) sağlanmış olur
+
+### Drag & Drop Eventleri
+**Drag Over**
+```
+  onDragOver={onDragOver}
+```
+Kullanıcı dosyayı alanın üzerine getirince:
+- e.preventDefault() yapılır
+- isDragOver = true olur
+
+**Drag Leave**
+```
+  onDragLeave={onDragLeave}
+```
+Kullanıcı alanı terk edince:
+- isDragOver = false
+
+**Drop**
+```
+  onDrop={onDrop}
+```
+Dosya bırakıldığında:
+  DropZone -> onDrop -> handleFilesChosen()
+- Dosyalar alınır
+- Upload süreci başlar
+
+### Dinamik UI (Conditional Styling)
+```
+  className={[
+    "...",
+    isDragOver ? "border-blue-400" : "border-gray-500",
+    disabled ? "opacity-60 pointer-events-none" : "hover:border-blue-400",
+  ].join(" ")}
+```
+**Bu Ne Yapıyor?**
+- Drag sırasında : 
+```
+  isDragOver = true -> border mavi olur
+```
+- Normal durumda : 
+```
+  border gri
+```
+- Disabled durumda : 
+```
+  opacity düşer + tıklama kapanır
+```
+
+### Disabled Mantığı
+```
+  disabled ? "pointer-events-none" : ...
+```
+
+- Upload sırasında :
+  - Kullanıcı tekrar dosya seçemez
+  - UI pasif hale gelir
+
+- Bu UX açısından çok önemli
+- Çift upload hatasını engeller
+
+### Mimari Detay
+Bu component:
+  - Dosya seçmez
+  - Upload başlatmaz
+  - Sadece event üretir
+
+### Veri Akışı
+User action -> DropZone -> Parent Function -> State Update -> UI değiştir
+
+### DRY Prensibi 
+Hem:
+```
+  onDrop
+  onClick
+```
+aynı fonksiyona gider:
+
+```
+  handleFilesChosen()
+```
+
+- Kod tekrarını önler
+- Tek merkezden kontrol sağlar
+
+### Sonuç
+`DropZone.jsx`:
+- Drag & Drop + click ile dosya seçimi sağlar
+- Tamamen stateless çalışır
+- Accessibility destekler
+- Dinamik UI feedback verir
+- Parent component ile event üzerinden haberleşir
+
+## 6) `FileList.jsx`
+
+Bu component, seçilen dosyaların **liste halinde gösterilmesini** ve her dosyanın **yükleme durumunun (status)** kullanıcıya sunulmasını sağlar.
+Amaç:
+- Kullanıcıya tüm dosyaları tek yerde göstermek
+- Her dosyanın anlık durumunu (waiting / uploading / completed / error) göstermek
+- Toplam yükleme özetini sunmak
+
+### Component Yapısı & Tipi
+**Component Yapısı**
+```
+  export default function FileList({ files, statuses, imageUrlsByKey, totalBytes })
+```
+Aldığı Props:
+- `files` → Seçilen dosyalar
+- `statuses` → Her dosyanın durumu
+- `imageUrlsByKey` → Preview URL’leri
+- `totalBytes` → Toplam dosya boyutu
+Bu component:
+  - State tutmaz
+  - Sadece gelen veriyi render eder
+
+**Component Tipi**
+Bu bir:
+- Presentational Component
+- Stateless Component
+
+### Özet Bilgi (Header)
+```
+  const completed = Object.values(statuses).filter((s) => s === "completed").length;
+  const errors = Object.values(statuses).filter((s) => s === "error").length;
+```
+**Ne yapıyor?**
+- Kaç dosya tamamlandı?
+- Kaç dosya hata verdi? hesaplanıyor.
+
+```
+  Toplam: {files.length} dosya ({formatBytes(totalBytes)}) | OK {completed} | ERR {errors}
+```
+**Kullanıcı Ne Görür?**
+```
+  Toplam: 3 dosya (2.4 MB) | OK 2 | ERR 1
+```
+- Çok önemli UX detayı
+- Kullanıcı süreci anlık takip eder
+
+### Dosya Listesi Render
+```
+  files.map((file, idx) => { ... })
+```
+Her dosya için ayrı bir UI oluşturulur.
+
+## Dosya Bilgisi Çıkarma
+```
+  const status = statuses[idx] || "waiting";
+```
+
+- Eğer status yoksa:
+```
+  default → "waiting"
+  const ext = getExt(file?.name);
+```
+
+- Dosya uzantısı alınır (örn: png, pdf)
+```
+  const key = `${idx}:${file?.name}:${file?.size}:${file?.lastModified}`;
+```
+- Unique key oluşturulur
+- Neden bu kadar detaylı?
+  - Aynı isimli dosyalar çakışmasın
+  - React doğru render yapsın
+
+## Image Preview Mantığı
+```
+  const url = IMAGE_TYPES.includes(ext) ? imageUrlsByKey[key] : null;
+```
+Eğer dosya bir görselse:
+  - preview gösterilir
+Değilse:
+- null → fallback UI
+
+## Her Dosya UI Yapısı
+```
+  <div className="file-item-with-preview">
+```
+İçinde 3 ana parça var:
+
+**1) Preview**
+```
+  <FilePreview file={file} url={url} size="sm" />
+```
+- Görsel varsa gösterir
+- Yoksa icon gösterir
+
+**2) Dosya Bilgileri**
+```
+  <div className="file-name">{file.name}</div>
+  <div className="file-size">{formatBytes(file.size)}</div>
+```
+Kullanıcı:
+- Dosya adı
+- Boyut görür
+
+**3) Status Icon**
+```
+  <StatusIcon status={status} />
+```
+Duruma göre icon:
+- waiting ⏳
+- uploading 🔄
+- completed ✅
+- error ❌
+
+
+
+
+
+
 
 ### 7) `FilePreview.jsx`
 

@@ -1,5 +1,5 @@
 export default function HeaderIcon() {
-  // SVG kept inline to preserve original look without external assets.
+  // Orijinal görünümü korumak için SVG dosyası harici öğeler olmadan satır içi olarak tutuldu.
   return (
     <svg
       width="32px"

@@ -23,7 +23,7 @@ export default function DropZone({
         disabled ? "opacity-60 pointer-events-none" : "hover:border-blue-400",
       ].join(" ")}
     >
-      <p className="text-sm text-gray-300">Dosyalari buraya surukle veya tikla</p>
+      <p className="text-sm text-gray-300">Dosyaları buraya sürükle veya tıkla</p>
     </div>
   );
 }
