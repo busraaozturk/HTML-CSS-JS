@@ -6,7 +6,7 @@ export default function Controls({ isUploading, isPaused, onReset, onTogglePause
         onClick={onReset}
         className="bg-gray-600 px-4 py-2 rounded-xl hover:bg-gray-700 transition w-full"
       >
-        Sifirla
+        Sıfırla
       </button>
       <button
         type="button"
