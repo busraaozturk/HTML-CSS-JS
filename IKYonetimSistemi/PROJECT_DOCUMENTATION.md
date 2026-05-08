@@ -1,3 +1,6 @@
+# İnsan Kaynakları Yönetim Sistemi (HRMS)
+Bu doküman, projenin SDLC (Software Development Life Cycle) sürecine uygun olarak analiz, tasarım, geliştirme ve yayınlama aşamalarını kapsamaktadır.
+
 ## Proje Tanımı
 ### Proje Adı:
 İnsan Kaynakları Yönetim Sistemi
@@ -368,6 +371,10 @@ Sistemin genel durumunu özetlemek
 - Güncelle
 - Sil
 
+#### Yetkilendirme (Authorization)
+- Sistem başlangıçta tek kullanıcı (İK) ile çalışmaktadır
+- İlerleyen versiyonlarda rol bazlı yetkilendirme (Admin, Çalışan) eklenecektir.
+
 #### React Component Mimarisi
 **Genel Component Yapısı:**
 - Layout
@@ -514,12 +521,14 @@ JSON / Database
 - Kullanıcılar tarafından erişilebilir hale gelmiştir
 - Frontend ve backend entegre şekilde çalışmaktadır
 
+### Not:
+JSON tabanlı veri yapısı, bazı hosting platformlarında kalıcı olmayabilir. Bu nedenle production ortamında veritabanı kullanılması önerilmektedir.
+
 ## Maintenance (Bakım)
 ### Amaç :
-
-Bu aşamada, canlı ortama alınan sistemin sürekliliğinin sağlanması, ortaya çıkan hataların giderilmesi ve kullanıcı ihtiyaçlarına göre sistemin geliştirilmesi amaçlanmıştır.
-
-Sistemin performanslı, güvenli ve güncel kalması hedeflenmiştir.
+- Bu aşamada, canlı ortama alınan sistemin sürekliliğinin sağlanması, ortaya çıkan hataların giderilmesi ve kullanıcı ihtiyaçlarına göre sistemin geliştirilmesi amaçlanmıştır.
+- Sistemin performanslı, güvenli ve güncel kalması hedeflenmiştir.
+- API performansı ve response süreleri izlenecektir.
 
 ### Bakım Türleri : 
 #### 1. Düzeltici Bakım (Corrective Maintenance)
@@ -570,3 +579,18 @@ Sistemin yeni teknolojilere veya değişen ihtiyaçlara uyarlanmasını kapsar.
 - Sistem stabil ve sürdürülebilir hale getirilmiştir
 - Hatalar minimize edilmiştir
 - Yeni özellikler eklenmeye uygun hale getirilmiştir
+
+
+
+
+
+
+
+
+
+
+
+
+Not : 
+GPT : https://chatgpt.com/c/69f1a81e-f67c-83eb-8177-430afa7bc29e
+BAŞLIK : UI KISMINA KÜÇÜK AMA GÜÇLÜ EK buradan devam edilecek
