@@ -146,6 +146,16 @@ Detaylı SDLC ve sistem tasarım dokümanı:
 ```
     PROJECT_DOCUMENTATION.md
 ```
+## 📁 Proje Yapısı
+IKYonetimSistemi/
+│
+├── backend/
+├── frontend/
+├── screenshots/
+│
+├── PROJECT_DOCUMENTATION.md
+├── README.md
+└── .gitignore
 
 ## 👩‍💻 Geliştirici
 Büşra Öztürk / Frontend Developer
