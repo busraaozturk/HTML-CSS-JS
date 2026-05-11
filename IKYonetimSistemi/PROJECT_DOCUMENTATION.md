@@ -1,6 +1,16 @@
 # İnsan Kaynakları Yönetim Sistemi (HRMS)
 Bu doküman, projenin SDLC (Software Development Life Cycle) sürecine uygun olarak analiz, tasarım, geliştirme ve yayınlama aşamalarını kapsamaktadır.
 
+## İçindekiler
+1. Proje Tanımı
+2. Planning (Planlama)
+3. Analysis (Analiz)
+4. Tasarım
+5. Development (Geliştirme)
+6. Testing (Test)
+7. Deployment (Yayınlama)
+8. Maintenance (Bakım)
+
 ## Proje Tanımı
 ### Proje Adı:
 İnsan Kaynakları Yönetim Sistemi
@@ -84,7 +94,7 @@ Ayrıca sistemde yer alacak modüllerin görevleri, veri yapıları ve kullanıc
 - Departman silinebilmelidir
 - Personeller departmanlara atanabilmelidir
 #### İzin Yönetimi
-- İK personeli kaydı oluşturabilmelidir
+- İK personeli izin kaydı oluşturabilmelidir
 - İzin başlangıç ve bitiş tarihleri girilebilmelidir
 - İzin türü seçilebilmelidir (yıllık izin, raporlu vs.)
 - İzin durumu (onaylandı, reddedildi, beklemede) güncellenebilmelidir
@@ -251,7 +261,7 @@ Node.js API (Backend)
         ↓
 Repository Layer
         ↓
-JSON Data (Geçici) → Database (Gelecek)
+JSON Data Layer MVP (Geçici) → Relational Database (Future Version) / (Gelecek)
 ```
 
 ### 4.UI / UX Tasarım
@@ -414,6 +424,45 @@ Sistemin genel durumunu özetlemek
 - Responsive (mobil uyumlu) yapı
 - Form validasyonları ile hata önleme
 - Kullanıcı dostu navigasyon
+
+## Development (Geliştirme)
+### Amaç:
+Bu aşamada tasarımı yapılan sistemin ***Frontend*** ve ***Backend*** geliştirme süreçleri gerçekleştirilmiştir.
+Belirlenen mimari yapıya uygun olarak kullanıcı arayüzü, API servisleri ve veri yönetim katmanı geliştirilmiştir.
+### Yapılan Geliştirmeler
+#### Frontend (React)
+- React ile component tabanlı yapı oluşturuldu
+- Sayfa yönlendirmeleri React Router kullanılarak geliştirildi
+- Form yapıları ve validasyon işlemleri oluşturuldu
+- API servis entegrasyonları gerçekleştirildi
+
+#### Backend (Node.js & Express)
+- RESTful API endpointleri geliştirildi
+- Controller, Service ve Repository katmanları oluşturuldu
+- JSON tabanlı veri yönetimi geliştirildi
+- CRUD işlemleri tamamlandı
+
+### Kullanılan Teknolojiler
+#### Frontend
+- React 
+- React Router
+- Axios
+- TailwindCSS 
+
+#### Backend
+- Node.js
+- Express.js
+
+### Geliştirme Yaklaşımı
+- Modüler yapı benimsenmiştir
+- Yeniden kullanılabilir component yapıları oluşturulmuştur
+- Katmanlı mimari uygulanmıştır
+- Kod okunabilirliği ve sürdürebilirliği ön planda tutulmuştur
+
+### Çıktı
+- Çalışan frontend uygulaması
+- Çalışan backend uygulaması
+- Modüler proje yapısı
 
 ## Testing (Test Aşaması)
 ### Amaç:
@@ -580,17 +629,10 @@ Sistemin yeni teknolojilere veya değişen ihtiyaçlara uyarlanmasını kapsar.
 - Hatalar minimize edilmiştir
 - Yeni özellikler eklenmeye uygun hale getirilmiştir
 
-
-
-
-
-
-
-
-
-
-
-
-Not : 
-GPT : https://chatgpt.com/c/69f1a81e-f67c-83eb-8177-430afa7bc29e
-BAŞLIK : UI KISMINA KÜÇÜK AMA GÜÇLÜ EK buradan devam edilecek
+## Gelecek Geliştirmeler
+- JWT Authentication
+- Rol bazlı yetkilendirme
+- Gerçek veritabanı entegrasyonu
+- Çalışan paneli
+- Dashboard grafik raporları
+- E-posta bildirim sistemi
