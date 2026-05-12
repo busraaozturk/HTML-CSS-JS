@@ -1,9 +1,7 @@
+import AppRouter from "./routes/AppRouter";
+
 function App() {
-  return (
-    <div>
-      <h1>HRMS Project</h1>
-    </div>
-  );
+  return <AppRouter></AppRouter>;
 }
 
 export default App;

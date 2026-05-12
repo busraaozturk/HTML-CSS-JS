@@ -68,7 +68,7 @@ frontend/
 │   │   ├── izinService.js
 │   │   └── departmanService.js
 │   │
-│   ├── data/
+│   ├── data/ **Şimdilikmock data database kullanılmadığı için**
 │   │   ├── personeller.json
 │   │   ├── izinler.json
 │   │   └── departmanlar.json
@@ -83,3 +83,147 @@ frontend/
 ├── package.json
 ├── vite.config.js
 └── index.html
+
+--------------------------------
+
+📁 public/
+
+Direkt tarayıcıya açık dosyalar.
+
+Örnek:
+
+favicon
+logo
+robots.txt
+📁 src/
+
+Gerçek React kodlarının olduğu yer.
+
+En önemli klasör.
+
+📁 assets/
+
+Statik dosyalar.
+
+📁 images/
+
+Resimler
+
+📁 icons/
+
+İkonlar
+
+📁 styles/
+
+CSS dosyaları
+
+Örnek:
+
+global.css
+variables.css
+📁 components/
+
+Tekrar kullanılabilir parçalar.
+
+📁 common/
+
+Genel componentler
+
+Örnek:
+
+Loader
+Modal
+Pagination
+📁 forms/
+
+Form componentleri
+
+Örnek:
+
+Input
+Select
+FormGroup
+📁 tables/
+
+Tablo componentleri
+
+Örnek:
+
+PersonelTable
+IzinTable
+📁 ui/
+
+UI parçaları
+
+Örnek:
+
+Button
+Card
+Badge
+📁 layouts/
+
+Sayfa iskeletleri.
+
+MainLayout
+
+En önemli layout.
+
+Şunu içerir:
+
+Navbar
+Sidebar
+Content
+📁 pages/
+
+Gerçek ekranlar.
+
+📁 routes/
+
+React Router yönetimi.
+
+Tüm route sistemi burada.
+
+📁 services/
+
+API işlemleri.
+
+Çok önemli klasör.
+
+api.js
+
+Axios ayarları
+
+personelService.js
+
+Personel API istekleri
+
+Örnek:
+
+getAllPersonels()
+createPersonel()
+deletePersonel()
+📁 data/
+
+Şimdilik mock data.
+
+Çünkü:
+👉 database kullanmıyoruz.
+
+İleride kaldırılabilir.
+
+📁 hooks/
+
+Custom React hookları.
+
+Şimdilik boş olabilir.
+
+İleri seviye.
+
+📁 utils/
+
+Yardımcı fonksiyonlar.
+
+Örnek:
+
+formatDate.js
+validateEmail.js
