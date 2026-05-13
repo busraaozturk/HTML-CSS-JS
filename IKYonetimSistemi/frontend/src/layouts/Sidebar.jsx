@@ -25,6 +25,11 @@ function Sidebar() {
             Personel
           </Link>
         </li>
+        <li>
+          <Link to="/personel/ekle" style={linkStyle}>
+            Personel Ekle
+          </Link>
+        </li>
 
         <li>
           <Link to="/izin" style={linkStyle}>
