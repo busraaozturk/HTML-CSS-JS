@@ -13,8 +13,8 @@ function AppRouter() {
                 <Route path="/" element={<MainLayout />}>
                     <Route index element={<DashboardPage />} />
                     <Route path="personel" element={<PersonelPage />} />
-                     <Route path="/personel/ekle" element={<PersonelCreatePage />} />
-                     <Route path="/personel/duzenle/:id" element={<PersonelEditPage />} />
+                    <Route path="personel/ekle" element={<PersonelCreatePage />} />
+                    <Route path="personel/duzenle/:id" element={<PersonelEditPage />} />
                     <Route path="izin" element={<IzinPage />} />
                     <Route path="departman" element={<DepartmanPage />} />
                 </Route>
@@ -23,4 +23,4 @@ function AppRouter() {
     );
 }
 
-export default AppRouter; 
+export default AppRouter;

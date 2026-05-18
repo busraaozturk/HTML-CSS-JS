@@ -1,52 +1,66 @@
 import { useState } from "react";
-import Input from "../../components/common/Input/Input";
-import Button from "../../components/common/Button/Button";
+import { useNavigate } from "react-router-dom";
+import PersonelForm from "../../components/personel/PersonelForm/PersonelForm";
+import { personelData } from "../../data/personeller";
 
 function PersonelCreatePage() {
+  const navigate = useNavigate();
 
-  const [ad, setAd] = useState("");
-  const [soyad, setSoyad] = useState("");
+  const [formData, setFormData] = useState({
+    ad: "",
+    soyad: "",
+    email: "",
+    telefon: "",
+    departmanId: "",
+    olusturmaTarihi: "",
+  });
 
-  const handleSubmit = () => {
+  const onChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const onSubmit = () => {
+    if (!formData.ad || !formData.soyad || !formData.email || !formData.telefon || !formData.departmanId || !formData.olusturmaTarihi) {
+      alert("Lütfen tüm alanları doldurunuz!");
+      return;
+    }
 
     const yeniPersonel = {
-      ad,
-      soyad
+      id: Math.max(...personelData.map(p => p.id), 0) + 1,
+      ...formData,
+      departmanId: parseInt(formData.departmanId),
     };
 
-    console.log("Personel Eklendi:", yeniPersonel);
+    personelData.push(yeniPersonel);
+    console.log("Yeni Personel Eklendi:", yeniPersonel);
 
-    // input temizleme
-    setAd("");
-    setSoyad("");
+    setFormData({
+      ad: "",
+      soyad: "",
+      email: "",
+      telefon: "",
+      departmanId: "",
+      olusturmaTarihi: "",
+    });
+
+    navigate("/personel");
   };
 
   return (
-    <div className="p-6 max-w-md">
-
+    <div className="p-6">
       <h1 className="text-2xl font-bold mb-6">
         Yeni Personel
       </h1>
-
-      <Input
-        label="Ad"
-        value={ad}
-        onChange={(e) => setAd(e.target.value)}
-        placeholder="Ad giriniz"
+      <PersonelForm
+        formData={formData}
+        onChange={onChange}
+        onSubmit={onSubmit}
+        buttonText="Personel Ekle"
       />
-
-      <Input
-        label="Soyad"
-        value={soyad}
-        onChange={(e) => setSoyad(e.target.value)}
-        placeholder="Soyad giriniz"
-      />
-
-      <Button
-        text="Kaydet"
-        onClick={handleSubmit}
-      />
-
     </div>
   );
 }
