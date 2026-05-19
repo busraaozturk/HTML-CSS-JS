@@ -9,7 +9,12 @@ function DepartmanCreatePage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    departmanData.push({ id: Date.now(), ad });
+    const yeniId = departmanData.length > 0 ? Math.max(...departmanData.map(d => d.id)) + 1 : 1;
+    departmanData.push({ id: yeniId, ad });
+    // departmanData referansını değiştirerek React'ın güncellemesini tetikle
+    const temp = [...departmanData];
+    departmanData.length = 0;
+    temp.forEach(d => departmanData.push(d));
     navigate("/departman");
   };
 

@@ -13,6 +13,10 @@ function DepartmanEditPage() {
     e.preventDefault();
     if (departman) {
       departman.ad = ad;
+      // departmanData referansını değiştirerek React'ın güncellemesini tetikle
+      const temp = [...departmanData];
+      departmanData.length = 0;
+      temp.forEach(d => departmanData.push(d));
     }
     navigate("/departman");
   };

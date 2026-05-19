@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { departmanData } from "../../data/personeller";
 import DepartmanTable from "../../components/departman/DepartmanTable/DepartmanTable";
@@ -8,6 +8,10 @@ import Button from "../../components/common/Button/Button";
 function DepartmanPage() {
   const navigate = useNavigate();
   const [departmanlar, setDepartmanlar] = useState(departmanData);
+
+  useEffect(() => {
+    setDepartmanlar([...departmanData]);
+  }, []);
 
   const onDelete = (id) => {
     const yeniListe = departmanlar.filter((d) => d.id !== id);
