@@ -4,6 +4,8 @@ import DashboardPage from "../pages/Dashboard/DashboardPage";
 import PersonelPage from "../pages/Personel/PersonelPage";
 import IzinPage from "../pages/Izin/IzinPage";
 import DepartmanPage from "../pages/Departman/DepartmanPage";
+import DepartmanCreatePage from "../pages/Departman/DepartmanCreatePage";
+import DepartmanEditPage from "../pages/Departman/DepartmanEditPage";
 import PersonelCreatePage from "../pages/Personel/PersonelCreatePage";
 import PersonelEditPage from "../pages/Personel/PersonelEditPage";
 function AppRouter() {
@@ -17,6 +19,8 @@ function AppRouter() {
                     <Route path="personel/duzenle/:id" element={<PersonelEditPage />} />
                     <Route path="izin" element={<IzinPage />} />
                     <Route path="departman" element={<DepartmanPage />} />
+                    <Route path="departman/ekle" element={<DepartmanCreatePage />} />
+                    <Route path="departman/duzenle/:id" element={<DepartmanEditPage />} />
                 </Route>
             </Routes>
         </BrowserRouter>
