@@ -1,7 +1,8 @@
 import AppRouter from "./routes/AppRouter";
+import { ToastContainer } from "react-toastify";
 
 function App() {
-  return 
+  return (
   <>
     <AppRouter/>
     
@@ -10,6 +11,7 @@ function App() {
     autoClose={3000}
     />
   </>
+  )
   ;
 }
 
