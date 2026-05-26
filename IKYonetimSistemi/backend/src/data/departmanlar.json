@@ -1,0 +1,22 @@
+[
+    {
+        "id": 1,
+        "name": "Yazılım Geliştirme",
+        "description": "Yazılım geliştirme departmanı, şirketin yazılım projelerini planlar, geliştirir ve yönetir."
+    },
+    {
+        "id": 2,
+        "name": "Pazarlama",
+        "description": "Pazarlama departmanı, şirketin ürün ve hizmetlerini tanıtmak, müşteri ilişkilerini yönetmek ve satış stratejileri geliştirmekle sorumludur."
+    },
+    {
+        "id": 3,
+        "name": "İnsan Kaynakları",
+        "description": "İnsan kaynakları departmanı, şirketin personel yönetimi, işe alım, eğitim ve çalışan ilişkileri gibi konularla ilgilenir."
+    },
+    {
+        "id": 4,
+        "name": "Finans",
+        "description": "Finans departmanı, şirketin mali işlemlerini yönetir, bütçeleme yapar ve finansal raporlar hazırlar."
+    }
+]
