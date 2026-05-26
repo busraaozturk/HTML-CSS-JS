@@ -8,6 +8,8 @@ import DepartmanCreatePage from "../pages/Departman/DepartmanCreatePage";
 import DepartmanEditPage from "../pages/Departman/DepartmanEditPage";
 import PersonelCreatePage from "../pages/Personel/PersonelCreatePage";
 import PersonelEditPage from "../pages/Personel/PersonelEditPage";
+import IzinCreatePage from "../pages/Izin/IzinCreatePage";
+import IzinEditPage from "../pages/Izin/IzinEditPage";
 function AppRouter() {
     return (
         <BrowserRouter>
@@ -18,6 +20,8 @@ function AppRouter() {
                     <Route path="personel/ekle" element={<PersonelCreatePage />} />
                     <Route path="personel/duzenle/:id" element={<PersonelEditPage />} />
                     <Route path="izin" element={<IzinPage />} />
+                    <Route path="izin/ekle" element={<IzinCreatePage />} />
+                    <Route path="izin/duzenle/:id" element={<IzinEditPage />} />
                     <Route path="departman" element={<DepartmanPage />} />
                     <Route path="departman/ekle" element={<DepartmanCreatePage />} />
                     <Route path="departman/duzenle/:id" element={<DepartmanEditPage />} />
