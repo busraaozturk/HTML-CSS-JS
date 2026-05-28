@@ -1,5 +1,8 @@
-import Repository
-from "../repositories/Repository.js";
+import Repository from "../repositories/Repository.js";
+import {
+  validatePersonel
+}
+from "../utils/validation.js";
 
 const personelRepository =
   new Repository(
@@ -36,6 +39,11 @@ export const getPersonelById =
 export const createPersonel =
   async (req, res) => {
 
+    const errors = validatePersonel(req.body);
+    if (errors.length > 0) {
+      return res.status(400).json({ errors });
+    }
+
     const yeniPersonel =
       await personelRepository.create(
         req.body
@@ -48,6 +56,11 @@ export const createPersonel =
 
 export const updatePersonel =
   async (req, res) => {
+
+    const errors = validatePersonel(req.body);
+    if (errors.length > 0) {
+      return res.status(400).json({ errors });
+    }
 
     const updatedPersonel =
       await personelRepository.update(
