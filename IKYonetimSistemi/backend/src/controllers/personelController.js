@@ -81,12 +81,19 @@ export const updatePersonel =
 export const deletePersonel =
   async (req, res) => {
 
-    await personelRepository.delete(
+    const result = await personelRepository.delete(
       req.params.id
     );
 
+    if (!result) {
+      return res.status(404).json({
+        message:
+          "Personel bulunamadı"
+      });
+    }
+
     res.json({
       message:
-        "Personel silindi"
+        "Personel başarıyla silindi"
     });
-};
+  };

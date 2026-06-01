@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PersonelForm from "../../components/personel/PersonelForm/PersonelForm";
-import { personelData } from "../../data/personeller";
+import { createPersonel } from "../../api/personelApi";
 
 function PersonelCreatePage() {
   const navigate = useNavigate();
@@ -15,39 +15,47 @@ function PersonelCreatePage() {
     olusturmaTarihi: "",
   });
 
+  const [loading, setLoading] = useState(false);
+
   const onChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
+
+    setFormData((prev) => ({
+      ...prev,
       [name]: value,
-    });
+    }));
   };
 
-  const onSubmit = () => {
-    if (!formData.ad || !formData.soyad || !formData.email || !formData.telefon || !formData.departmanId || !formData.olusturmaTarihi) {
+  const onSubmit = async () => {
+    if (
+      !formData.ad ||
+      !formData.soyad ||
+      !formData.email ||
+      !formData.telefon ||
+      !formData.departmanId ||
+      !formData.olusturmaTarihi
+    ) {
       alert("Lütfen tüm alanları doldurunuz!");
       return;
     }
 
-    const yeniPersonel = {
-      id: Math.max(...personelData.map(p => p.id), 0) + 1,
-      ...formData,
-      departmanId: parseInt(formData.departmanId),
-    };
+    try {
+      setLoading(true);
 
-    personelData.push(yeniPersonel);
-    console.log("Yeni Personel Eklendi:", yeniPersonel);
+      await createPersonel({
+        ...formData,
+        departmanId: Number(formData.departmanId),
+      });
 
-    setFormData({
-      ad: "",
-      soyad: "",
-      email: "",
-      telefon: "",
-      departmanId: "",
-      olusturmaTarihi: "",
-    });
+      alert("Personel başarıyla eklendi.");
 
-    navigate("/personel");
+      navigate("/personel");
+    } catch (error) {
+      console.error(error);
+      alert("Personel eklenirken hata oluştu.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -55,11 +63,16 @@ function PersonelCreatePage() {
       <h1 className="text-2xl font-bold mb-6">
         Yeni Personel
       </h1>
+
       <PersonelForm
         formData={formData}
         onChange={onChange}
         onSubmit={onSubmit}
-        buttonText="Personel Ekle"
+        buttonText={
+          loading
+            ? "Kaydediliyor..."
+            : "Personel Ekle"
+        }
       />
     </div>
   );

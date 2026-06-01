@@ -11,6 +11,18 @@ function PersonelTable({
         return departman ? departman.ad : "Bilinmiyor";
     };
 
+    const handleDeleteClick = (id) => {
+        // 1. kullanıcı onayı (gerçekçi sistem davranışı)
+        const confirmDelete = window.confirm(
+            "Bu personeli silmek istediğinize emin misiniz?"
+        );
+
+        if (!confirmDelete) return;
+
+        // 2. parent'a bildir (API çağrısı orada yapılacak)
+        onDelete(id);
+    };
+
     return (
         <table className="w-full border mt-4">
             <thead>
@@ -28,29 +40,36 @@ function PersonelTable({
 
             <tbody>
                 {personeller.map((p) => (
-                <tr key={p.id} className="text-center">
-                    <td className="border p-2">{p.id}</td>
-                    <td className="border p-2">{p.ad}</td>
-                    <td className="border p-2">{p.soyad}</td>
-                    <td className="border p-2">{p.email}</td>
-                    <td className="border p-2">{p.telefon}</td>
-                    <td className="border p-2">{getDepartmanAdi(p.departmanId)}</td>
-                    <td className="border p-2">{p.olusturmaTarihi}</td>
-                    <td className="border p-2">
-                    <div className="flex justify-center gap-2">
-                        <Button
-                        text="Düzenle"
-                        onClick={() => onEdit(p.id)}
-                        />
+                    <tr key={p.id} className="text-center">
+                        <td className="border p-2">{p.id}</td>
+                        <td className="border p-2">{p.ad}</td>
+                        <td className="border p-2">{p.soyad}</td>
+                        <td className="border p-2">{p.email}</td>
+                        <td className="border p-2">{p.telefon}</td>
+                        <td className="border p-2">
+                            {getDepartmanAdi(p.departmanId)}
+                        </td>
+                        <td className="border p-2">
+                            {p.olusturmaTarihi}
+                        </td>
 
-                        <Button
-                        text="Sil"
-                        onClick={() => onDelete(p.id)}
-                        />
-                    </div>
-                    </td>
-                </tr>
-                ))} 
+                        <td className="border p-2">
+                            <div className="flex justify-center gap-2">
+
+                                <Button
+                                    text="Düzenle"
+                                    onClick={() => onEdit(p.id)}
+                                />
+
+                                <Button
+                                    text="Sil"
+                                    onClick={() => handleDeleteClick(p.id)}
+                                />
+
+                            </div>
+                        </td>
+                    </tr>
+                ))}
             </tbody>
         </table>
     );

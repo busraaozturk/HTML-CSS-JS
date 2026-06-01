@@ -57,7 +57,12 @@ class Repository {
 
     async delete(id) {
         const items = await this.getAll();
-        const filteredItems = items.filter((item) => item.ids !== id);
+        const filteredItems = items.filter((item) => item.id !== id);
+
+        // Gerçekten silinmiş mi kontrol et
+        if (items.length === filteredItems.length) {
+            return null; // Silinecek öğe bulunamadı
+        }
 
         await this.SaveAll(filteredItems);
 
