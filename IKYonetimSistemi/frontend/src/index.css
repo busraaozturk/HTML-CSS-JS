@@ -1,1 +1,59 @@
-@import "tailwindcss"; 
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  --color-primary: #5e7a6b;
+  --color-secondary: #8fa89a;
+  --color-accent: #d8e3dc;
+  --color-background: #f7f8f6;
+  --color-title: #2f3e34;
+  --color-muted: #6b7280;
+
+  --shadow-soft: 0 1px 3px rgba(47, 62, 52, 0.06), 0 8px 24px rgba(47, 62, 52, 0.05);
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-background);
+  color: var(--color-muted);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--color-title);
+}
+
+@layer components {
+  .page-title {
+    @apply text-2xl font-semibold text-title;
+  }
+
+  .card {
+    @apply rounded-2xl border border-accent/60 bg-white shadow-soft;
+  }
+
+  .table-card {
+    @apply overflow-hidden rounded-2xl border border-accent/60 bg-white shadow-soft;
+  }
+
+  .field-label {
+    @apply mb-1.5 block text-sm font-medium text-title;
+  }
+
+  .field-input {
+    @apply w-full rounded-2xl border border-gray-200 bg-background px-4 py-2.5 text-title placeholder:text-muted/70 transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30;
+  }
+
+  .btn-primary {
+    @apply rounded-2xl bg-primary px-4 py-2.5 text-sm font-medium text-white shadow-soft transition hover:bg-[#51695b] active:bg-[#445a4d] disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .btn-outline {
+    @apply rounded-2xl border border-primary/40 px-4 py-2.5 text-sm font-medium text-primary transition hover:bg-accent/40 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+}

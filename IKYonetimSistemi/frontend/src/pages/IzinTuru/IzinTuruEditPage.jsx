@@ -1,41 +1,39 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import DepartmanForm from "../../components/departman/DepartmanForm/DepartmanForm";
-import { getDepartmanById, updateDepartman } from "../../api/departmanApi";
+import IzinTuruForm from "../../components/izinTuru/IzinTuruForm/IzinTuruForm";
+import { getIzinTuruById, updateIzinTuru } from "../../api/izinTuruApi";
 
-function DepartmanEditPage() {
+function IzinTuruEditPage() {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     name: "",
-    description: "",
   });
 
   const [loading, setLoading] = useState(true);
 
-  // Get Departman by ID (API)
+  // Get İzin Türü by ID (API)
   useEffect(() => {
-    const fetchDepartman = async () => {
+    const fetchIzinTuru = async () => {
       try {
         setLoading(true);
 
-        const departman = await getDepartmanById(id);
+        const izinTuru = await getIzinTuruById(id);
 
-        if (departman) {
+        if (izinTuru) {
           setFormData({
-            name: departman.name,
-            description: departman.description,
+            name: izinTuru.name,
           });
         }
       } catch (error) {
-        console.error("Departman bilgisi getirilirken hata oluştu:", error);
+        console.error("İzin türü bilgisi getirilirken hata oluştu:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchDepartman();
+    fetchIzinTuru();
   }, [id]);
 
   const onChange = (e) => {
@@ -48,31 +46,31 @@ function DepartmanEditPage() {
 
   // update işlemi (API)
   const onSubmit = async () => {
-    if (!formData.name || !formData.description) {
+    if (!formData.name) {
       alert("Lütfen tüm alanları doldurunuz!");
       return;
     }
 
     try {
-      await updateDepartman(id, formData);
+      await updateIzinTuru(id, formData);
 
-      navigate("/departman");
+      navigate("/izin-turleri");
     } catch (error) {
-      console.error("Departman güncellenirken hata oluştu:", error);
+      console.error("İzin türü güncellenirken hata oluştu:", error);
     }
   };
 
   if (loading) {
-    return <div className="text-sm text-muted">Departman bilgileri yükleniyor...</div>;
+    return <div className="text-sm text-muted">İzin türü bilgileri yükleniyor...</div>;
   }
 
   return (
     <div className="flex flex-col gap-6">
       <h1 className="page-title">
-        Departman Düzenle
+        İzin Türü Düzenle
       </h1>
 
-      <DepartmanForm
+      <IzinTuruForm
         formData={formData}
         onChange={onChange}
         onSubmit={onSubmit}
@@ -82,4 +80,4 @@ function DepartmanEditPage() {
   );
 }
 
-export default DepartmanEditPage;
+export default IzinTuruEditPage;

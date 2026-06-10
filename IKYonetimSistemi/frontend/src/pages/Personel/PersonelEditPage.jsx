@@ -77,29 +77,12 @@ function PersonelEditPage() {
   };
 
   if (loading) {
-    return (
-      <div className="p-6">
-        <p>Personel bilgileri yükleniyor...</p>
-      </div>
-    );
+    return <div className="text-sm text-muted">Personel bilgileri yükleniyor...</div>;
   }
 
-
-  //   const personelIndex = personelData.findIndex((p) => p.id === parseInt(id));
-  //   if (personelIndex !== -1) {
-  //     personelData[personelIndex] = {
-  //       id: parseInt(id),
-  //       ...formData,
-  //       departmanId: parseInt(formData.departmanId),
-  //     };
-  //     console.log("Personel Güncellendi:", personelData[personelIndex]);
-  //     navigate("/personel");
-  //   }
-  // };
-
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">
+    <div className="flex flex-col gap-6">
+      <h1 className="page-title">
         Personel Düzenle
       </h1>
 

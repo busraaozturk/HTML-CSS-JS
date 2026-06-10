@@ -21,7 +21,7 @@ class Repository {
 
     async getById(id) {
         const items = await this.getAll();
-        return items.find(item => item.id === id);
+        return items.find(item => item.id == id);
     }
 
     async create(newItem) {
@@ -40,7 +40,7 @@ class Repository {
 
     async update(id, updatedData) {
         const items = await this.getAll();
-        const index = items.findIndex(item => item.id === id);
+        const index = items.findIndex(item => item.id == id);
 
         if (index === -1) {
             return null; // Güncellenecek öğe bulunamazsa null döndür
@@ -57,7 +57,7 @@ class Repository {
 
     async delete(id) {
         const items = await this.getAll();
-        const filteredItems = items.filter((item) => item.id !== id);
+        const filteredItems = items.filter((item) => item.id != id);
 
         // Gerçekten silinmiş mi kontrol et
         if (items.length === filteredItems.length) {

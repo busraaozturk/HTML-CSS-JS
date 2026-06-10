@@ -5,15 +5,15 @@ import Sidebar from "./Sidebar";
 
 function MainLayout() {
   return (
-    <div>
+    <div className="min-h-screen bg-background font-sans">
       <Navbar />
 
-      <div style={{ display: "flex" }}>
+      <div className="flex">
         <Sidebar />
 
-        <div style={{ padding: "20px", width: "100%" }}>
+        <main className="min-w-0 flex-1 p-6">
           <Outlet />
-        </div>
+        </main>
       </div>
     </div>
   );

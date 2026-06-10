@@ -10,10 +10,15 @@ import PersonelCreatePage from "../pages/Personel/PersonelCreatePage";
 import PersonelEditPage from "../pages/Personel/PersonelEditPage";
 import IzinCreatePage from "../pages/Izin/IzinCreatePage";
 import IzinEditPage from "../pages/Izin/IzinEditPage";
+import IzinTuruPage from "../pages/IzinTuru/IzinTuruPage";
+import IzinTuruCreatePage from "../pages/IzinTuru/IzinTuruCreatePage";
+import IzinTuruEditPage from "../pages/IzinTuru/IzinTuruEditPage";
+import LoginPage from "../pages/Auth/LoginPage";
 function AppRouter() {
     return (
         <BrowserRouter>
             <Routes>
+                <Route path="/login" element={<LoginPage />} />
                 <Route path="/" element={<MainLayout />}>
                     <Route index element={<DashboardPage />} />
                     <Route path="personel" element={<PersonelPage />} />
@@ -22,6 +27,9 @@ function AppRouter() {
                     <Route path="izin" element={<IzinPage />} />
                     <Route path="izin/ekle" element={<IzinCreatePage />} />
                     <Route path="izin/duzenle/:id" element={<IzinEditPage />} />
+                    <Route path="izin-turleri" element={<IzinTuruPage />} />
+                    <Route path="izin-turleri/ekle" element={<IzinTuruCreatePage />} />
+                    <Route path="izin-turleri/duzenle/:id" element={<IzinTuruEditPage />} />
                     <Route path="departman" element={<DepartmanPage />} />
                     <Route path="departman/ekle" element={<DepartmanCreatePage />} />
                     <Route path="departman/duzenle/:id" element={<DepartmanEditPage />} />

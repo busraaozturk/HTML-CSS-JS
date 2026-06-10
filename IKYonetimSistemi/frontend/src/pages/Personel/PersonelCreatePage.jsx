@@ -59,8 +59,8 @@ function PersonelCreatePage() {
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">
+    <div className="flex flex-col gap-6">
+      <h1 className="page-title">
         Yeni Personel
       </h1>
 

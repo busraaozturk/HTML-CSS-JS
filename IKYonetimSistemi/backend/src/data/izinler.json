@@ -1,1 +1,11 @@
-[]
+[
+  {
+    "id": "1781089289351",
+    "personelId": "1780153249492",
+    "departmanId": 2,
+    "baslangicTarih": "2026-06-10",
+    "bitisTarih": "2026-06-10",
+    "izinTuruId": 1,
+    "durum": "Onaylandı"
+  }
+]

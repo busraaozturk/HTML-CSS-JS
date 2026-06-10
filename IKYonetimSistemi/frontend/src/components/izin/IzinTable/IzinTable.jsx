@@ -1,38 +1,52 @@
 import Button from "../../common/Button/Button";
 
-function IzinTable({ izinler, onEdit, onDelete, getPersonelAdi }) {
+function IzinTable({ izinler, onEdit, onDelete, getPersonelAdi, getDepartmanAdi, getIzinTuruAdi }) {
+  const handleDeleteClick = (id) => {
+    const confirmDelete = window.confirm(
+      "Bu izni silmek istediğinize emin misiniz?"
+    );
+
+    if (!confirmDelete) return;
+
+    onDelete(id);
+  };
+
   return (
-    <table className="w-full border mt-4">
-      <thead>
-        <tr className="bg-gray-100">
-          <th className="p-2 border">ID</th>
-          <th className="p-2 border">Personel</th>
-          <th className="p-2 border">Başlangıç Tarihi</th>
-          <th className="p-2 border">Bitiş Tarihi</th>
-          <th className="p-2 border">İzin Türü</th>
-          <th className="p-2 border">Durum</th>
-          <th className="p-2 border">İşlemler</th>
-        </tr>
-      </thead>
-      <tbody>
-        {izinler.map((izin) => (
-          <tr key={izin.id} className="text-center">
-            <td className="border p-2">{izin.id}</td>
-            <td className="border p-2">{getPersonelAdi(izin.personelId)}</td>
-            <td className="border p-2">{izin.baslangicTarih}</td>
-            <td className="border p-2">{izin.bitisTarih}</td>
-            <td className="border p-2">{izin.izinTuru}</td>
-            <td className="border p-2">{izin.durum}</td>
-            <td className="border p-2">
-              <div className="flex justify-center gap-2">
-                <Button text="Düzenle" onClick={() => onEdit(izin.id)} />
-                <Button text="Sil" onClick={() => onDelete(izin.id)} />
-              </div>
-            </td>
+    <div className="table-card overflow-x-auto">
+      <table className="w-full text-left text-sm">
+        <thead>
+          <tr className="bg-accent/40 text-title">
+            <th className="px-4 py-3 font-semibold">ID</th>
+            <th className="px-4 py-3 font-semibold">Personel</th>
+            <th className="px-4 py-3 font-semibold">Departman</th>
+            <th className="px-4 py-3 font-semibold">Başlangıç Tarihi</th>
+            <th className="px-4 py-3 font-semibold">Bitiş Tarihi</th>
+            <th className="px-4 py-3 font-semibold">İzin Türü</th>
+            <th className="px-4 py-3 font-semibold">Durum</th>
+            <th className="px-4 py-3 font-semibold">İşlemler</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody className="divide-y divide-accent/40">
+          {izinler.map((izin) => (
+            <tr key={izin.id} className="transition hover:bg-background">
+              <td className="px-4 py-3">{izin.id}</td>
+              <td className="px-4 py-3">{getPersonelAdi(izin.personelId)}</td>
+              <td className="px-4 py-3">{getDepartmanAdi(izin.departmanId)}</td>
+              <td className="px-4 py-3">{izin.baslangicTarih}</td>
+              <td className="px-4 py-3">{izin.bitisTarih}</td>
+              <td className="px-4 py-3">{getIzinTuruAdi(izin.izinTuruId)}</td>
+              <td className="px-4 py-3">{izin.durum}</td>
+              <td className="px-4 py-3">
+                <div className="flex gap-2">
+                  <Button text="Düzenle" onClick={() => onEdit(izin.id)} />
+                  <Button text="Sil" variant="outline" onClick={() => handleDeleteClick(izin.id)} />
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
 

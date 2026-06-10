@@ -1,14 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import DepartmanForm from "../../components/departman/DepartmanForm/DepartmanForm";
-import { createDepartman } from "../../api/departmanApi";
+import IzinTuruForm from "../../components/izinTuru/IzinTuruForm/IzinTuruForm";
+import { createIzinTuru } from "../../api/izinTuruApi";
 
-function DepartmanCreatePage() {
+function IzinTuruCreatePage() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     name: "",
-    description: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -23,7 +22,7 @@ function DepartmanCreatePage() {
   };
 
   const onSubmit = async () => {
-    if (!formData.name || !formData.description) {
+    if (!formData.name) {
       alert("Lütfen tüm alanları doldurunuz!");
       return;
     }
@@ -31,14 +30,14 @@ function DepartmanCreatePage() {
     try {
       setLoading(true);
 
-      await createDepartman(formData);
+      await createIzinTuru(formData);
 
-      alert("Departman başarıyla eklendi.");
+      alert("İzin türü başarıyla eklendi.");
 
-      navigate("/departman");
+      navigate("/izin-turleri");
     } catch (error) {
       console.error(error);
-      alert("Departman eklenirken hata oluştu.");
+      alert("İzin türü eklenirken hata oluştu.");
     } finally {
       setLoading(false);
     }
@@ -47,21 +46,21 @@ function DepartmanCreatePage() {
   return (
     <div className="flex flex-col gap-6">
       <h1 className="page-title">
-        Yeni Departman
+        Yeni İzin Türü
       </h1>
 
-      <DepartmanForm
+      <IzinTuruForm
         formData={formData}
         onChange={onChange}
         onSubmit={onSubmit}
         buttonText={
           loading
             ? "Kaydediliyor..."
-            : "Departman Ekle"
+            : "İzin Türü Ekle"
         }
       />
     </div>
   );
 }
 
-export default DepartmanCreatePage;
+export default IzinTuruCreatePage;

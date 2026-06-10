@@ -1,53 +1,58 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { izinlerData } from "../../data/izinler";
 import IzinForm from "../../components/izin/IzinForm/IzinForm";
+import { createIzin } from "../../api/izinApi";
 
 function IzinCreatePage() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     personelId: "",
+    departmanId: "",
     baslangicTarih: "",
     bitisTarih: "",
-    izinTuru: "",
+    izinTuruId: "",
     durum: "",
   });
+
+  const [loading, setLoading] = useState(false);
 
   const onChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const onSubmit = () => {
-    if (!formData.personelId || !formData.baslangicTarih || !formData.bitisTarih || !formData.izinTuru || !formData.durum) {
-      alert("Lütfen tüm alanları doldurunuz");
+  const onSubmit = async () => {
+    if (!formData.personelId || !formData.departmanId || !formData.baslangicTarih || !formData.bitisTarih || !formData.izinTuruId || !formData.durum) {
+      alert("Lütfen tüm alanları doldurunuz!");
       return;
     }
 
-    const yeniId = izinlerData.length > 0 ? Math.max(...izinlerData.map(i => i.id)) + 1 : 1;
-    const yeniIzin = {
-      id: yeniId,
-      personelId: parseInt(formData.personelId),
-      baslangicTarih: formData.baslangicTarih,
-      bitisTarih: formData.bitisTarih,
-      izinTuru: formData.izinTuru,
-      durum: formData.durum,
-    };
+    try {
+      setLoading(true);
 
-    izinlerData.push(yeniIzin);
-    // refresh reference
-    const temp = [...izinlerData];
-    izinlerData.length = 0;
-    temp.forEach(i => izinlerData.push(i));
+      await createIzin(formData);
 
-    navigate('/izin');
+      alert("İzin başarıyla eklendi.");
+
+      navigate("/izin");
+    } catch (error) {
+      console.error("İzin eklenirken hata oluştu:", error);
+      alert("İzin eklenirken hata oluştu.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Yeni İzin Ekle</h1>
-      <IzinForm formData={formData} onChange={onChange} onSubmit={onSubmit} buttonText="İzin Kaydet" />
+    <div className="flex flex-col gap-6">
+      <h1 className="page-title">Yeni İzin Ekle</h1>
+      <IzinForm
+        formData={formData}
+        onChange={onChange}
+        onSubmit={onSubmit}
+        buttonText={loading ? "Kaydediliyor..." : "İzin Kaydet"}
+      />
     </div>
   );
 }

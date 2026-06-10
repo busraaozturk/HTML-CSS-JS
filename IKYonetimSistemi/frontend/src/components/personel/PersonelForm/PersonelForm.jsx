@@ -1,6 +1,7 @@
+import { useEffect, useState } from "react";
 import Input from "../../common/Input/Input";
 import Button from "../../common/Button/Button";
-import { departmanData } from "../../../data/personeller";
+import { getDepartmanlar } from "../../../api/departmanApi";
 
 function PersonelForm({
     formData,
@@ -8,8 +9,23 @@ function PersonelForm({
     onSubmit,
     buttonText = "Kaydet",
 }) {
+    const [departmanlar, setDepartmanlar] = useState([]);
+
+    useEffect(() => {
+        const fetchDepartmanlar = async () => {
+            try {
+                const data = await getDepartmanlar();
+                setDepartmanlar(data);
+            } catch (error) {
+                console.error("Departmanlar getirilirken hata oluştu:", error);
+            }
+        };
+
+        fetchDepartmanlar();
+    }, []);
+
     return (
-        <div className="max-w-md">
+        <div className="card max-w-md p-6 sm:p-8">
             <Input
                 label="Ad"
                 name="ad"
@@ -42,17 +58,17 @@ function PersonelForm({
                 placeholder="Telefon giriniz"
             />
 
-            <div className="flex flex-col gap-1 mb-3">
-                <label className="text-sm text-gray-600">Departman</label>
+            <div className="flex flex-col gap-1 mb-4">
+                <label className="field-label">Departman</label>
                 <select
                     name="departmanId"
                     value={formData.departmanId}
                     onChange={onChange}
-                    className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="field-input"
                 >
                     <option value="">Departman Seçiniz</option>
-                    {departmanData.map(d => (
-                        <option key={d.id} value={d.id}>{d.ad}</option>
+                    {departmanlar.map(d => (
+                        <option key={d.id} value={d.id}>{d.name}</option>
                     ))}
                 </select>
             </div>
@@ -66,7 +82,7 @@ function PersonelForm({
                 placeholder="Oluşturma tarihi giriniz"
             />
 
-            <Button text={buttonText} onClick={onSubmit} />
+            <Button text={buttonText} onClick={onSubmit} className="mt-2" />
         </div>
     );
 }

@@ -1,9 +1,11 @@
-function Button ({text, onClick, type = "button"}) {
+function Button ({text, onClick, type = "button", variant = "primary", className = ""}) {
+    const variantClass = variant === "outline" ? "btn-outline" : "btn-primary";
+
     return (
-        <button 
+        <button
         type={type}
-        onClick={onClick} 
-        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+        onClick={onClick}
+        className={`${variantClass} ${className}`.trim()}>
             {text}
         </button>
     );
