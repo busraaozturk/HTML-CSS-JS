@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>İKYS — İnsan Kaynakları Yönetim Sistemi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --primary: #5E7A6B;
+    --primary-dark: #4a6256;
+    --secondary: #8FA89A;
+    --accent: #D8E3DC;
+    --bg: #F7F8F6;
+    --bg2: #EFF2EE;
+    --title: #2F3E34;
+    --text: #6B7280;
+    --white: #ffffff;
+    --border: rgba(94,122,107,0.18);
+    --shadow: 0 2px 20px rgba(47,62,52,0.07);
+    --radius: 12px;
+    --radius-sm: 8px;
+    --sidebar-w: 260px;
+  }
+
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── NAVBAR ── */
+  .navbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(247,248,246,0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 2rem;
+    transition: box-shadow .2s;
+  }
+  .navbar.scrolled { box-shadow: var(--shadow); }
+  .navbar-brand {
+    display: flex; align-items: center; gap: 10px; text-decoration: none;
+  }
+  .brand-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: var(--primary);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 18px;
+    flex-shrink: 0;
+  }
+  .brand-name {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700; font-size: 17px;
+    color: var(--title);
+    letter-spacing: -0.3px;
+  }
+  .brand-sub { font-size: 11px; color: var(--secondary); font-weight: 400; display: block; line-height: 1; margin-top: 1px; }
+  .nav-links { display: flex; align-items: center; gap: 0.25rem; }
+  .nav-links a {
+    text-decoration: none; color: var(--text);
+    font-size: 14px; padding: 6px 14px; border-radius: var(--radius-sm);
+    transition: background .15s, color .15s;
+  }
+  .nav-links a:hover { background: var(--accent); color: var(--title); }
+  .nav-cta {
+    background: var(--primary) !important;
+    color: #fff !important;
+    font-weight: 500;
+  }
+  .nav-cta:hover { background: var(--primary-dark) !important; }
+  .hamburger {
+    display: none; background: none; border: none; cursor: pointer;
+    color: var(--title); font-size: 22px; padding: 4px;
+  }
+  .mobile-menu {
+    display: none; position: fixed; top: 64px; left: 0; right: 0;
+    background: var(--white); border-bottom: 1px solid var(--border);
+    padding: 1rem; flex-direction: column; gap: 0.25rem; z-index: 99;
+    box-shadow: var(--shadow);
+  }
+  .mobile-menu.open { display: flex; }
+  .mobile-menu a {
+    text-decoration: none; color: var(--text); font-size: 15px;
+    padding: 10px 14px; border-radius: var(--radius-sm);
+    transition: background .15s;
+  }
+  .mobile-menu a:hover { background: var(--accent); color: var(--title); }
+  .mobile-menu .nav-cta { background: var(--primary) !important; color: #fff !important; text-align: center; margin-top: 8px; }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 120px 2rem 80px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, #D8E3DC55 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--accent); color: var(--primary);
+    font-size: 13px; font-weight: 500;
+    padding: 5px 14px; border-radius: 100px;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(94,122,107,0.2);
+  }
+  .hero-badge i { font-size: 14px; }
+  .hero h1 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: clamp(2.2rem, 5vw, 3.6rem);
+    font-weight: 700;
+    color: var(--title);
+    line-height: 1.15;
+    letter-spacing: -1px;
+    max-width: 760px; margin: 0 auto 1.25rem;
+  }
+  .hero h1 span { color: var(--primary); }
+  .hero p {
+    font-size: clamp(1rem, 2vw, 1.15rem);
+    color: var(--text); max-width: 560px; margin: 0 auto 2.5rem;
+    line-height: 1.75;
+  }
+  .hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--primary); color: #fff;
+    padding: 12px 28px; border-radius: var(--radius-sm);
+    font-size: 15px; font-weight: 500; text-decoration: none;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: background .18s, transform .18s;
+    border: none; cursor: pointer;
+  }
+  .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+  .btn-outline {
+    background: transparent; color: var(--primary);
+    padding: 12px 28px; border-radius: var(--radius-sm);
+    font-size: 15px; font-weight: 500; text-decoration: none;
+    display: inline-flex; align-items: center; gap: 8px;
+    border: 1.5px solid var(--primary);
+    transition: background .18s, color .18s;
+    cursor: pointer;
+  }
+  .btn-outline:hover { background: var(--accent); }
+
+  /* ── STATS BAR ── */
+  .stats-bar {
+    background: var(--white);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 0;
+  }
+  .stats-bar-inner {
+    max-width: 900px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(3, 1fr);
+  }
+  .stat-item {
+    padding: 2rem 1.5rem;
+    text-align: center;
+    position: relative;
+  }
+  .stat-item:not(:last-child)::after {
+    content: ''; position: absolute; right: 0; top: 25%; bottom: 25%;
+    width: 1px; background: var(--border);
+  }
+  .stat-num {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 2rem; font-weight: 700; color: var(--title); display: block;
+  }
+  .stat-label { font-size: 13px; color: var(--secondary); margin-top: 4px; }
+
+  /* ── SECTIONS ── */
+  section { padding: 80px 2rem; }
+  .section-inner { max-width: 1100px; margin: 0 auto; }
+  .section-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: var(--primary); font-size: 13px; font-weight: 500;
+    background: var(--accent); padding: 4px 12px; border-radius: 100px;
+    margin-bottom: 1rem;
+  }
+  .section-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: clamp(1.6rem, 3vw, 2.25rem);
+    font-weight: 700; color: var(--title);
+    line-height: 1.25; letter-spacing: -0.5px;
+    margin-bottom: 0.75rem;
+  }
+  .section-desc {
+    font-size: 1rem; color: var(--text);
+    max-width: 560px; line-height: 1.75;
+    margin-bottom: 3rem;
+  }
+
+  /* ── FEATURES ── */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.25rem;
+  }
+  .feature-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.75rem;
+    transition: transform .2s, box-shadow .2s;
+    position: relative; overflow: hidden;
+  }
+  .feature-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: var(--primary); opacity: 0; transition: opacity .2s;
+  }
+  .feature-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+  .feature-card:hover::before { opacity: 1; }
+  .feature-icon {
+    width: 48px; height: 48px; border-radius: 12px;
+    background: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--primary); font-size: 22px;
+    margin-bottom: 1rem;
+  }
+  .feature-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 1rem; font-weight: 600; color: var(--title);
+    margin-bottom: 0.5rem;
+  }
+  .feature-desc { font-size: 14px; color: var(--text); line-height: 1.65; }
+
+  /* ── SCREENS PREVIEW ── */
+  .preview-section { background: var(--bg2); }
+  .screens-nav {
+    display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 2rem;
+  }
+  .screen-tab {
+    background: var(--white); border: 1px solid var(--border);
+    color: var(--text); font-size: 13px; font-weight: 500;
+    padding: 7px 16px; border-radius: 100px; cursor: pointer;
+    transition: all .18s; white-space: nowrap;
+  }
+  .screen-tab.active, .screen-tab:hover {
+    background: var(--primary); color: #fff; border-color: var(--primary);
+  }
+  .screen-content { display: none; }
+  .screen-content.active { display: block; }
+  .screen-frame {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+
+  /* ── MOCKUP STYLES ── */
+  .mock-layout { display: flex; min-height: 520px; }
+  .mock-sidebar {
+    width: 220px; flex-shrink: 0;
+    background: var(--title);
+    padding: 0;
+    display: flex; flex-direction: column;
+  }
+  .mock-sidebar-head {
+    padding: 18px 16px 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .mock-sidebar-head .logo-dot {
+    width: 28px; height: 28px; border-radius: 8px;
+    background: var(--primary);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 14px;
+  }
+  .mock-sidebar-head .logo-text {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px; font-weight: 700; color: #fff;
+    line-height: 1.2;
+  }
+  .mock-sidebar-head .logo-text span { display: block; font-size: 10px; font-weight: 400; opacity: 0.5; }
+  .mock-nav { padding: 12px 8px; flex: 1; overflow: hidden; }
+  .mock-nav-section-label {
+    font-size: 10px; font-weight: 500; color: rgba(255,255,255,0.35);
+    text-transform: uppercase; letter-spacing: 0.8px;
+    padding: 8px 10px 4px;
+  }
+  .mock-nav-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 10px; border-radius: 8px;
+    font-size: 13px; color: rgba(255,255,255,0.65);
+    cursor: pointer; transition: background .15s, color .15s;
+    white-space: nowrap;
+  }
+  .mock-nav-item i { font-size: 15px; flex-shrink: 0; }
+  .mock-nav-item:hover, .mock-nav-item.active {
+    background: rgba(255,255,255,0.09); color: #fff;
+  }
+  .mock-nav-item.active { background: rgba(94,122,107,0.35); color: #fff; }
+  .mock-nav-sub { padding-left: 28px; }
+  .mock-nav-sub .mock-nav-item { font-size: 12px; padding: 5px 8px; color: rgba(255,255,255,0.5); }
+  .mock-nav-sub .mock-nav-item.active { color: #c8ddd3; background: rgba(94,122,107,0.2); }
+  .mock-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  .mock-topbar {
+    padding: 0 20px; height: 52px;
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .mock-topbar-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 15px; font-weight: 600; color: var(--title);
+  }
+  .mock-topbar-right { display: flex; align-items: center; gap: 10px; }
+  .mock-avatar {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 600; color: var(--primary);
+  }
+  .mock-body { padding: 20px; flex: 1; overflow: hidden; }
+  .mock-page-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 18px;
+  }
+  .mock-page-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 16px; font-weight: 700; color: var(--title);
+  }
+  .mock-page-sub { font-size: 12px; color: var(--secondary); margin-top: 2px; }
+  .mock-btn {
+    background: var(--primary); color: #fff;
+    border: none; border-radius: 8px;
+    font-size: 12px; font-weight: 500; padding: 7px 14px;
+    display: inline-flex; align-items: center; gap: 5px; cursor: pointer;
+    white-space: nowrap;
+  }
+  .mock-btn-sm { font-size: 11px; padding: 5px 10px; }
+  .mock-btn-outline {
+    background: transparent; color: var(--primary); border: 1px solid var(--primary);
+    border-radius: 8px; font-size: 11px; font-weight: 500; padding: 5px 10px;
+    display: inline-flex; align-items: center; gap: 4px; cursor: pointer;
+  }
+
+  /* Dashboard cards */
+  .mock-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 18px; }
+  .mock-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px 16px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .mock-card-icon {
+    width: 38px; height: 38px; border-radius: 10px;
+    background: var(--accent); display: flex; align-items: center; justify-content: center;
+    color: var(--primary); font-size: 18px; flex-shrink: 0;
+  }
+  .mock-card-icon.teal { background: #e0f2f0; color: #2d8e82; }
+  .mock-card-icon.blue { background: #e5edf9; color: #3b5fa0; }
+  .mock-card-num { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 22px; font-weight: 700; color: var(--title); }
+  .mock-card-lbl { font-size: 11px; color: var(--secondary); }
+
+  /* Table */
+  .mock-search-row { display: flex; gap: 8px; margin-bottom: 12px; }
+  .mock-search {
+    flex: 1; display: flex; align-items: center; gap: 8px;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 8px; padding: 7px 12px;
+    font-size: 12px; color: var(--secondary);
+  }
+  .mock-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .mock-table thead th {
+    text-align: left; padding: 8px 10px;
+    font-size: 11px; font-weight: 500; color: var(--secondary);
+    background: var(--bg); border-bottom: 1px solid var(--border);
+  }
+  .mock-table tbody tr { border-bottom: 1px solid var(--border); }
+  .mock-table tbody tr:last-child { border-bottom: none; }
+  .mock-table tbody td { padding: 8px 10px; color: var(--title); font-size: 12px; }
+  .mock-table tbody tr:hover { background: var(--bg); }
+  .badge {
+    display: inline-flex; padding: 2px 8px; border-radius: 100px;
+    font-size: 11px; font-weight: 500;
+  }
+  .badge-green { background: #e0f5e9; color: #2a7a46; }
+  .badge-yellow { background: #fef3c7; color: #92600a; }
+  .badge-red { background: #fde8e8; color: #9b2626; }
+  .action-btns { display: flex; gap: 4px; }
+  .action-btn {
+    width: 26px; height: 26px; border-radius: 6px; border: 1px solid var(--border);
+    background: var(--white); display: flex; align-items: center; justify-content: center;
+    color: var(--secondary); font-size: 13px; cursor: pointer;
+    transition: background .15s, color .15s;
+  }
+  .action-btn:hover { background: var(--accent); color: var(--primary); }
+  .action-btn.danger:hover { background: #fde8e8; color: #9b2626; border-color: #fbb3b3; }
+
+  /* Form */
+  .mock-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .mock-form-group { display: flex; flex-direction: column; gap: 4px; }
+  .mock-form-group.full { grid-column: span 2; }
+  .mock-label { font-size: 11px; font-weight: 500; color: var(--title); }
+  .mock-input, .mock-select {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 7px; padding: 8px 10px;
+    font-size: 12px; color: var(--title);
+    font-family: inherit; appearance: none; outline: none;
+  }
+  .mock-input::placeholder { color: var(--secondary); }
+  .mock-form-actions {
+    display: flex; justify-content: flex-end; gap: 8px;
+    margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border);
+  }
+  .mock-btn-cancel {
+    background: var(--bg); color: var(--text); border: 1px solid var(--border);
+    border-radius: 8px; font-size: 12px; padding: 7px 16px; cursor: pointer;
+  }
+
+  /* ── HOW IT WORKS ── */
+  .steps-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+  }
+  .step-item { text-align: center; padding: 1rem; }
+  .step-number {
+    width: 52px; height: 52px; border-radius: 50%;
+    background: var(--accent); color: var(--primary);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 1.2rem; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.25rem;
+    border: 2px solid rgba(94,122,107,0.2);
+  }
+  .step-item h3 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 1rem; font-weight: 600; color: var(--title); margin-bottom: 0.5rem;
+  }
+  .step-item p { font-size: 14px; color: var(--text); line-height: 1.6; }
+
+  /* ── CTA ── */
+  .cta-section {
+    background: var(--title);
+    text-align: center;
+    padding: 80px 2rem;
+  }
+  .cta-section .section-title { color: #fff; }
+  .cta-section .section-desc { color: rgba(255,255,255,0.6); max-width: 500px; margin: 0 auto 2rem; }
+  .cta-section .btn-primary { background: var(--primary); }
+  .cta-section .btn-outline { color: #fff; border-color: rgba(255,255,255,0.4); }
+  .cta-section .btn-outline:hover { background: rgba(255,255,255,0.08); }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--white);
+    border-top: 1px solid var(--border);
+    padding: 2.5rem 2rem;
+  }
+  .footer-inner {
+    max-width: 1100px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: gap;
+    gap: 1rem;
+  }
+  .footer-brand {
+    display: flex; align-items: center; gap: 8px; text-decoration: none;
+  }
+  .footer-brand .brand-icon { width: 30px; height: 30px; font-size: 14px; border-radius: 8px; }
+  .footer-brand .brand-name { font-size: 15px; }
+  .footer-right { font-size: 13px; color: var(--secondary); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+    .hamburger { display: block; }
+    .hero { padding: 100px 1.25rem 60px; }
+    section { padding: 60px 1.25rem; }
+    .stats-bar-inner { grid-template-columns: 1fr; }
+    .stat-item:not(:last-child)::after { display: none; }
+    .stat-item { padding: 1.25rem; }
+    .features-grid { grid-template-columns: 1fr; }
+    .mock-layout { flex-direction: column; }
+    .mock-sidebar { width: 100%; flex-direction: row; flex-wrap: wrap; }
+    .mock-sidebar-head { border-bottom: none; border-right: 1px solid rgba(255,255,255,0.08); }
+    .mock-nav { display: none; }
+    .mock-cards { grid-template-columns: 1fr; }
+    .mock-form-grid { grid-template-columns: 1fr; }
+    .mock-form-group.full { grid-column: span 1; }
+    .screens-nav { gap: 6px; }
+    .screen-tab { font-size: 12px; padding: 6px 12px; }
+    .steps-grid { grid-template-columns: 1fr; }
+    .footer-inner { flex-direction: column; text-align: center; }
+    .footer-inner { align-items: center; }
+  }
+  @media (max-width: 480px) {
+    .hero h1 { font-size: 1.85rem; }
+    .hero-actions { flex-direction: column; align-items: center; }
+    .btn-primary, .btn-outline { width: 100%; justify-content: center; }
+    .mock-cards { grid-template-columns: 1fr 1fr; }
+    .navbar { padding: 0 1.25rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+  <a href="#" class="navbar-brand">
+    <div class="brand-icon"><i class="ti ti-users-group" aria-hidden="true"></i></div>
+    <div>
+      <span class="brand-name">İKYS</span>
+      <span class="brand-sub">İnsan Kaynakları Yönetim Sistemi</span>
+    </div>
+  </a>
+  <div class="nav-links">
+    <a href="#ozellikler">Özellikler</a>
+    <a href="#ekranlar">Ekranlar</a>
+    <a href="#nasil-calisir">Nasıl Çalışır</a>
+    <a href="#baslayın" class="nav-cta">Hemen Başla</a>
+  </div>
+  <button class="hamburger" id="hamburger" aria-label="Menüyü aç">
+    <i class="ti ti-menu-2"></i>
+  </button>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#ozellikler">Özellikler</a>
+  <a href="#ekranlar">Ekranlar</a>
+  <a href="#nasil-calisir">Nasıl Çalışır</a>
+  <a href="#baslayın" class="nav-cta">Hemen Başla</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">
+    <i class="ti ti-sparkles" aria-hidden="true"></i>
+    Kurumsal İK Yönetimi
+  </div>
+  <h1>Personelinizi <span>akıllıca</span> yönetin, süreçlerinizi kolaylaştırın</h1>
+  <p>İzin takibi, departman yapılandırması ve personel kayıtlarını tek bir modern platformda birleştiren kapsamlı İK yönetim sistemi.</p>
+  <div class="hero-actions">
+    <a href="#ekranlar" class="btn-primary">
+      <i class="ti ti-eye" aria-hidden="true"></i>
+      Ekranları İncele
+    </a>
+    <a href="#ozellikler" class="btn-outline">
+      <i class="ti ti-list" aria-hidden="true"></i>
+      Özellikleri Keşfet
+    </a>
+  </div>
+</section>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stats-bar-inner">
+    <div class="stat-item">
+      <span class="stat-num">4</span>
+      <div class="stat-label">Temel Modül</div>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">%100</span>
+      <div class="stat-label">Mobil Uyumlu</div>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">7/24</span>
+      <div class="stat-label">Erişim İmkânı</div>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section id="ozellikler">
+  <div class="section-inner">
+    <div class="section-tag"><i class="ti ti-grid-dots" aria-hidden="true"></i> Temel Özellikler</div>
+    <h2 class="section-title">İK süreçlerinizin tamamı<br>tek platformda</h2>
+    <p class="section-desc">Personel verilerinden izin yönetimine, departman yapılanmasından ayrıntılı raporlara kadar ihtiyaç duyduğunuz her şey hazır.</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon"><i class="ti ti-users" aria-hidden="true"></i></div>
+        <div class="feature-title">Personel Yönetimi</div>
+        <p class="feature-desc">Personel ekleme, güncelleme ve silme işlemlerini kolayca yapın. Arama ve filtreleme ile istediğiniz kişiye anında ulaşın.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="ti ti-calendar-event" aria-hidden="true"></i></div>
+        <div class="feature-title">İzin Yönetimi</div>
+        <p class="feature-desc">Yıllık, ücretsiz, mazeret izinlerini takip edin. Başlangıç-bitiş tarihleri ve durum bilgisiyle tüm izinleri listeleyin.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="ti ti-building-community" aria-hidden="true"></i></div>
+        <div class="feature-title">Departman Yönetimi</div>
+        <p class="feature-desc">Şirket organizasyonunuzu yapılandırın. Departmanları oluşturun, düzenleyin; personelleri ilgili birimlere atayın.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="ti ti-chart-bar" aria-hidden="true"></i></div>
+        <div class="feature-title">Raporlama</div>
+        <p class="feature-desc">Personel sayısı, izin kullanımı ve departman dağılımı gibi kritik verileri anlık olarak görüntüleyin ve dışa aktarın.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SCREEN PREVIEWS -->
+<section id="ekranlar" class="preview-section">
+  <div class="section-inner">
+    <div class="section-tag"><i class="ti ti-device-desktop" aria-hidden="true"></i> Uygulama Ekranları</div>
+    <h2 class="section-title">Her modül, amaçsına göre tasarlandı</h2>
+    <p class="section-desc">Gerçek arayüz tasarımlarını keşfedin. Her ekran kullanıcı dostu ve sade bir deneyim sunar.</p>
+
+    <div class="screens-nav" role="tablist">
+      <button class="screen-tab active" onclick="showScreen('dashboard')" role="tab">Dashboard</button>
+      <button class="screen-tab" onclick="showScreen('personel-liste')" role="tab">Personel Listesi</button>
+      <button class="screen-tab" onclick="showScreen('personel-ekle')" role="tab">Personel Ekle</button>
+      <button class="screen-tab" onclick="showScreen('izin-liste')" role="tab">İzin Listesi</button>
+      <button class="screen-tab" onclick="showScreen('izin-ekle')" role="tab">İzin Ekle</button>
+      <button class="screen-tab" onclick="showScreen('izin-turleri')" role="tab">İzin Türleri</button>
+      <button class="screen-tab" onclick="showScreen('departman')" role="tab">Departman</button>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="screen-content active screen-frame" id="screen-dashboard">
+      <div class="mock-layout">
+        <aside class="mock-sidebar">
+          <div class="mock-sidebar-head">
+            <div class="logo-dot"><i class="ti ti-users-group"></i></div>
+            <div class="logo-text">İKYS <span>İnsan Kaynakları</span></div>
+          </div>
+          <nav class="mock-nav">
+            <div class="mock-nav-item active"><i class="ti ti-layout-dashboard"></i> Dashboard</div>
+            <div class="mock-nav-section-label">Modüller</div>
+            <div class="mock-nav-item"><i class="ti ti-users"></i> Personel Yönetimi</div>
+            <div class="mock-nav-sub">
+              <div class="mock-nav-item"><i class="ti ti-user-plus"></i> Personel Ekle</div>
+            </div>
+            <div class="mock-nav-item"><i class="ti ti-calendar-event"></i> İzin Yönetimi</div>
+            <div class="mock-nav-sub">
+              <div class="mock-nav-item"><i class="ti ti-calendar-plus"></i> İzin Ekle</div>
+              <div class="mock-nav-item"><i class="ti ti-tags"></i> İzin Türleri</div>
+              <div class="mock-nav-item"><i class="ti ti-tag"></i> İzin Türü Ekle</div>
+            </div>
+            <div class="mock-nav-item"><i class="ti ti-building-community"></i> Departman Yönetimi</div>
+            <div class="mock-nav-sub">
+              <div class="mock-nav-item"><i class="ti ti-building-plus"></i> Departman Ekle</div>
+            </div>
+            <div class="mock-nav-item"><i class="ti ti-chart-bar"></i> Raporlama</div>
+          </nav>
+        </aside>
+        <div class="mock-main">
+          <div class="mock-topbar">
+            <span class="mock-topbar-title">Dashboard</span>
+            <div class="mock-topbar-right">
+              <i class="ti ti-bell" style="color:var(--secondary);font-size:16px"></i>
+              <div class="mock-avatar">AK</div>
+            </div>
+          </div>
+          <div class="mock-body">
+            <div class="mock-page-header">
+              <div>
+                <div class="mock-page-title">Genel Bakış</div>
+                <div class="mock-page-sub">Sistemin anlık özeti</div>
+              </div>
+            </div>
+            <div class="mock-cards">
+              <div class="mock-card">
+                <div class="mock-card-icon"><i class="ti ti-users"></i></div>
+                <div>
+                  <div class="mock-card-num">148</div>
+                  <div class="mock-card-lbl">Toplam Personel</div>
+                </div>
+              </div>
+              <div class="mock-card">
+                <div class="mock-card-icon teal"><i class="ti ti-calendar-event"></i></div>
+                <div>
+                  <div class="mock-card-num">27</div>
+                  <div class="mock-card-lbl">Aktif İzin</div>
+                </div>
+              </div>
+              <div class="mock-card">
+                <div class="mock-card-icon blue"><i class="ti ti-building-community"></i></div>
+                <div>
+                  <div class="mock-card-num">12</div>
+                  <div class="mock-card-lbl">Departman</div>
+                </div>
+              </div>
+            </div>
+            <div style="background:var(--bg);border-radius:10px;padding:14px 16px;margin-top:4px;">
+              <div style="font-size:12px;font-weight:600;color:var(--title);margin-bottom:10px;">Son İzin Talepleri</div>
+              <table class="mock-table">
+                <thead><tr><th>Personel</th><th>İzin Türü</th><th>Durum</th></tr></thead>
+                <tbody>
+                  <tr><td>Ayşe Kaya</td><td>Yıllık İzin</td><td><span class="badge badge-yellow">Bekliyor</span></td></tr>
+                  <tr><td>Mehmet Demir</td><td>Mazeret İzni</td><td><span class="badge badge-green">Onaylandı</span></td></tr>
+                  <tr><td>Fatma Yılmaz</td><td>Ücretsiz İzin</td><td><span class="badge badge-red">Reddedildi</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PERSONEL LİSTE -->
+    <div class="screen-content screen-frame" id="screen-personel-liste">
+      <div class="mock-layout">
+        <aside class="mock-sidebar">
+          <div class="mock-sidebar-head">
+            <div class="logo-dot"><i class="ti ti-users-group"></i></div>
+            <div class="logo-text">İKYS <span>İnsan Kaynakları</span></div>
+          </div>
+          <nav class="mock-nav">
+            <div class="mock-nav-item"><i class="ti ti-layout-dashboard"></i> Dashboard</div>
+            <div class="mock-nav-section-label">Modüller</div>
+            <div class="mock-nav-item active"><i class="ti ti-users"></i> Personel Yönetimi</div>
+            <div class="mock-nav-sub">
+              <div class="mock-nav-item"><i class="ti ti-user-plus"></i> Personel Ekle</div>
+            </div>
+            <div class="mock-nav-item"><i class="ti ti-calendar-event"></i> İzin Yönetimi</div>
+            <div class="mock-nav-item"><i class="ti ti-building-community"></i> Departman Yönetimi</div>
+            <div class="mock-nav-item"><i class="ti ti-chart-bar"></i> Raporlama</div>
+          </nav>
+        </aside>
+        <div class="mock-main">
+          <div class="mock-topbar">
+            <span class="mock-topbar-title">Personel Listesi</span>
+            <div class="mock-topbar-right">
+              <i class="ti ti-bell" style="color:var(--secondary);font-size:16px"></i>
+              <div class="mock-avatar">AK</div>
+            </div>
+          </div>
+          <div class="mock-body">
+            <div class="mock-page-header">
+              <div>
+                <div class="mock-page-title">Personel Listesi</div>
+                <div class="mock-page-sub">Tüm personelleri görüntüleyin ve yönetin</div>
+              </div>
+              <button class="mock-btn"><i class="ti ti-user-plus"></i> Yeni Personel Ekle</button>
+            </div>
+            <div class="mock-search-row">
+              <div class="mock-search"><i class="ti ti-search" style="font-size:14px"></i> Personel ara...</div>
+            </div>
+            <table class="mock-table">
+              <thead><tr><th>Ad</th><th>Soyad</th><th>E-posta</th><th>Telefon</th><th>Departman</th><th>İşlemler</th></tr></thead>
+              <tbody>
+                <tr><td>Ayşe</td><td>Kaya</td><td>ayse@sirket.com</td><td>0532 111 22 33</td><td><span class="badge badge-green">Yazılım</span></td><td><div class="action-btns"><button class="action-btn"><i class="ti ti-edit"></i></button><button class="action-btn danger"><i class="ti ti-trash"></i></button></div></td></tr>
+                <tr><td>Mehmet</td><td>Demir</td><td>mehmet@sirket.com</td><td>0541 444 55 66</td><td><span class="badge" style="background:#e5edf9;color:#2c4fa3">Finans</span></td><td><div class="action-btns"><button class="action-btn"><i class="ti ti-edit"></i></button><button class="action-btn danger"><i class="ti ti-trash"></i></button></div></td></tr>
+                <tr><td>Fatma</td><td>Yılmaz</td><td>fatma@sirket.com</td><td>0555 777 88 99</td><td><span class="badge" style="background:#f3e9fb;color:#7b2fa8">İK</span></td><td><div class="action-btns"><button class="action-btn"><i class="ti ti-edit"></i></button><button class="action-btn danger"><i class="ti ti-trash"></i></button></div></td></tr>
+                <tr><td>Ali</td><td>Çelik</td><td>ali@sirket.com</td><td>0544 321 65 87</td><td><span class="badge badge-yellow">Pazarlama</span></td><td><div class="action-btns"><button class="action-btn"><i class="ti ti-edit"></i></button><button class="action-btn danger"><i class="ti ti-trash"></i></button></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PERSONEL EKLE -->
+    <div class="screen-content screen-frame" id="screen-personel-ekle">
+      <div class="mock-layout">
+        <aside class="mock-sidebar">
+          <div class="mock-sidebar-head">
+            <div class="logo-dot"><i class="ti ti-users-group"></i></div>
+            <div class="logo-text">İKYS <span>İnsan Kaynakları</span></div>
+          </div>
+          <nav class="mock-nav">
+            <div class="mock-nav-item"><i class="ti ti-layout-dashboard"></i> Dashboard</div>
+            <div class="mock-nav-section-label">Modüller</div>
+            <div class="mock-nav-item"><i class="ti ti-users"></i> Personel Yönetimi</div>
+            <div class="mock-nav-sub">
+              <div class="mock-nav-item active"><i class="ti ti-user-plus"></i> Personel Ekle</div>
+            </div>
+            <div class="mock-nav-item"><i class="ti ti-calendar-event"></i> İzin Yönetimi</div>
+            <div class="mock-nav-item"><i class="ti ti-building-community"></i> Departman Yönetimi</div>
+            <div class="mock-nav-item"><i class="ti ti-chart-bar"></i> Raporlama</div>
+          </nav>
+        </aside>
+        <div class="mock-main">
+          <div class="mock-topbar">
+            <span class="mock-topbar-title">Personel Ekle</span>
+            <div class="mock-topbar-right"><div class="mock-avatar">AK</div></div>
+          </div>
+          <div class="mock-body">
+            <div class="mock-page-header">
+              <div>
+                <div class="mock-page-title">Yeni Personel Ekle</div>
+                <div class="mock-page-sub">Sisteme yeni personel kaydı oluşturun</div>
+              </div>
+            </div>
+            <div style="background:var(--white);border:1px solid var(--border);border-radius:10px;padding:18px;">
+              <div class="mock-form-grid">
+                <div class="mock-form-group">
+                  <label class="mock-label">Ad</label>
+                  <input class="mock-input" type="text" placeholder="Personelin adı" readonly>
+                </div>
+                <div class="mock-form-group">
+                  <label class="mock-label">Soyad</label>
+                  <input class="mock-input" type="text" placeholder="Personelin soyadı" readonly>
+                </div>
+                <div class="mock-form-group">
+                  <label class="mock-label">E-posta</label>
+                  <input class="mock-input" type="text" placeholder="ornek@sirket.com" readonly>
+                </div>
+                <div class="mock-form-group">
+                  <label class="mock-label">Telefon</label>
+                  <input class="mock-input" type="text" placeholder="0500 000 00 00" readonly>
+                </div>
+                <div class="mock-form-group full">
+                  <label class="mock-label">Departman</label>
+                  <select class="mock-select">
+                    <option>Departman seçin...</option>
+                    <option>Yazılım</option>
+                    <option>Finans</option>
+                    <option>İnsan Kaynakları</option>
+                    <option>Pazarlama</option>
+                  </select>
+                </div>
+              </div>
+              <div class="mock-form-actions">
+                <button class="mock-btn-cancel">İptal</button>
+                <button class="mock-btn">Kaydet</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- İZİN LİSTE -->
+    <div class="screen-content screen-frame" id="screen-izin-liste">
+      <div class="mock-layout">
+        <aside class="mock-sidebar">
+          <div class="mock-sidebar-head">
+            <div class="logo-dot"><i class="ti ti-users-group"></i></div>
+            <div class="logo-text">İKYS <span>İnsan Kaynakları</span></div>
+          </div>
+          <nav class="mock-nav">
+            <div class="mock-nav-item"><i class="ti ti-layout-dashboard"></i> Dashboard</div>
+            <div class="mock-nav-section-label">Modüller</div>
+            <div class="mock-nav-item"><i class="ti ti-users"></i> Personel Yönetimi</div>
+            <div class="mock-nav-item active"><i class="ti ti-calendar-event"></i> İzin Yönetimi</div>
+            <div class="mock-nav-sub">
+              <div class="mock-nav-item"><i class="ti ti-calendar-plus"></i> İzin Ekle</div>
+              <div class="mock-nav-item"><i class="ti ti-tags"></i> İzin Türleri</div>
+            </div>
+            <div class="mock-nav-item"><i class="ti ti-building-community"></i> Departman Yönetimi</div>
+          </nav>
+        </aside>
+        <div class="mock-main">
+          <div class="mock-topbar">
+            <span class="mock-topbar-title">İzin Listesi</span>
+            <div class="mock-topbar-right"><div class="mock-avatar">AK</div></div>
+          </div>
+          <div class="mock-body">
+            <div class="mock-page-header">
+              <div>
+                <div class="mock-page-title">İzin Listesi</div>
+                <div class="mock-page-sub">Tüm izin kayıtlarını görüntüleyin</div>
+              </div>
+              <button class="mock-btn"><i class="ti ti-calendar-plus"></i> İzin Ekle</button>
+            </div>
+            <table class="mock-table">
+              <thead><tr><th>Personel Adı</th><th>Başlangıç</th><th>Bitiş</th><th>İzin Türü</th><th>Durum</th></tr></thead>
+              <tbody>
+                <tr><td>Ayşe Kaya</td><td>15 Haz 2026</td><td>19 Haz 2026</td><td>Yıllık İzin</td><td><span class="badge badge-yellow">Bekliyor</span></td></tr>
+                <tr><td>Mehmet Demir</td><td>10 Haz 2026</td><td>11 Haz 2026</td><td>Mazeret İzni</td><td><span class="badge badge-green">Onaylandı</span></td></tr>
+                <tr><td>Fatma Yılmaz</td><td>5 Tem 2026</td><td>18 Tem 2026</td><td>Yıllık İzin</td><td><span class="badge badge-yellow">Bekliyor</span></td></tr>
+                <tr><td>Ali Çelik</td><td>3 Haz 2026</td><td>4 Haz 2026</td><td>Ücretsiz İzin</td><td><span class="badge badge-red">Reddedildi</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- İZİN EKLE -->
+    <div class="screen-content screen-frame" id="screen-izin-ekle">
+      <div class="mock-layout">
+        <aside class="mock-sidebar">
+          <div class="mock-sidebar-head">
+            <div class="logo-dot"><i class="ti ti-users-group"></i></div>
+            <div class="logo-text">İKYS <span>İnsan Kaynakları</span></div>
+          </div>
+          <nav class="mock-nav">
+            <div class="mock-nav-item"><i class="ti ti-layout-dashboard"></i> Dashboard</div>
+            <div class="mock-nav-section-label">Modüller</div>
+            <div class="mock-nav-item"><i class="ti ti-users"></i> Personel Yönetimi</div>
+            <div class="mock-nav-item"><i class="ti ti-calendar-event"></i> İzin Yönetimi</div>
+            <div class="mock-nav-sub">
+              <div class="mock-nav-item active"><i class="ti ti-calendar-plus"></i> İzin Ekle</div>
+              <div class="mock-nav-item"><i class="ti ti-tags"></i> İzin Türleri</div>
+            </div>
+            <div class="mock-nav-item"><i class="ti ti-building-community"></i> Departman Yönetimi</div>
+          </nav>
+        </aside>
+        <div class="mock-main">
+          <div class="mock-topbar">
+            <span class="mock-topbar-title">İzin Ekle</span>
+            <div class="mock-topbar-right"><div class="mock-avatar">AK</div></div>
+          </div>
+          <div class="mock-body">
+            <div class="mock-page-header">
+              <div>
+                <div class="mock-page-title">Yeni İzin Ekle</div>
+                <div class="mock-page-sub">Personel için izin kaydı oluşturun</div>
+              </div>
+            </div>
+            <div style="background:var(--white);border:1px solid var(--border);border-radius:10px;padding:18px;">
+              <div class="mock-form-grid">
+                <div class="mock-form-group full">
+                  <label class="mock-label">Personel</label>
+                  <select class="mock-select">
+                    <option>Personel seçin...</option>
+                    <option>Ayşe Kaya</option>
+                    <option>Mehmet Demir</option>
+                    <option>Fatma Yılmaz</option>
+                  </select>
+                </div>
+                <div class="mock-form-group">
+                  <label class="mock-label">Başlangıç Tarihi</label>
+                  <input class="mock-input" type="text" placeholder="GG / AA / YYYY" readonly>
+                </div>
+                <div class="mock-form-group">
+                  <label class="mock-label">Bitiş Tarihi</label>
+                  <input class="mock-input" type="text" placeholder="GG / AA / YYYY" readonly>
+                </div>
+                <div class="mock-form-group">
+                  <label class="mock-label">İzin Türü</label>
+                  <select class="mock-select">
+                    <option>Tür seçin...</option>
+                    <option>Yıllık İzin</option>
+                    <option>Mazeret İzni</option>
+                    <option>Ücretsiz İzin</option>
+                  </select>
+                </div>
+                <div class="mock-form-group">
+                  <label class="mock-label">Durum</label>
+                  <select class="mock-select">
+                    <option>Bekliyor</option>
+                    <option>Onaylandı</option>
+                    <option>Reddedildi</option>
+                  </select>
+                </div>
+              </div>
+              <div class="mock-form-actions">
+                <button class="mock-btn-cancel">İptal</button>
+                <button class="mock-btn">Kaydet</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- İZİN TÜRLERİ -->
+    <div class="screen-content screen-frame" id="screen-izin-turleri">
+      <div class="mock-layout">
+        <aside class="mock-sidebar">
+          <div class="mock-sidebar-head">
+            <div class="logo-dot"><i class="ti ti-users-group"></i></div>
+            <div class="logo-text">İKYS <span>İnsan Kaynakları</span></div>
+          </div>
+          <nav class="mock-nav">
+            <div class="mock-nav-item"><i class="ti ti-layout-dashboard"></i> Dashboard</div>
+            <div class="mock-nav-item"><i class="ti ti-users"></i> Personel Yönetimi</div>
+            <div class="mock-nav-item"><i class="ti ti-calendar-event"></i> İzin Yönetimi</div>
+            <div class="mock-nav-sub">
+              <div class="mock-nav-item"><i class="ti ti-calendar-plus"></i> İzin Ekle</div>
+              <div class="mock-nav-item active"><i class="ti ti-tags"></i> İzin Türleri</div>
+              <div class="mock-nav-item"><i class="ti ti-tag"></i> İzin Türü Ekle</div>
+            </div>
+            <div class="mock-nav-item"><i class="ti ti-building-community"></i> Departman Yönetimi</div>
+          </nav>
+        </aside>
+        <div class="mock-main">
+          <div class="mock-topbar">
+            <span class="mock-topbar-title">İzin Türleri</span>
+            <div class="mock-topbar-right"><div class="mock-avatar">AK</div></div>
+          </div>
+          <div class="mock-body">
+            <div class="mock-page-header">
+              <div>
+                <div class="mock-page-title">İzin Türleri</div>
+                <div class="mock-page-sub">Tanımlı izin türlerini yönetin</div>
+              </div>
+              <button class="mock-btn"><i class="ti ti-plus"></i> İzin Türü Ekle</button>
+            </div>
+            <table class="mock-table">
+              <thead><tr><th>İzin Türü</th><th>İşlemler</th></tr></thead>
+              <tbody>
+                <tr><td>Yıllık İzin</td><td><div class="action-btns"><button class="action-btn"><i class="ti ti-edit"></i></button><button class="action-btn danger"><i class="ti ti-trash"></i></button></div></td></tr>
+                <tr><td>Mazeret İzni</td><td><div class="action-btns"><button class="action-btn"><i class="ti ti-edit"></i></button><button class="action-btn danger"><i class="ti ti-trash"></i></button></div></td></tr>
+                <tr><td>Ücretsiz İzin</td><td><div class="action-btns"><button class="action-btn"><i class="ti ti-edit"></i></button><button class="action-btn danger"><i class="ti ti-trash"></i></button></div></td></tr>
+                <tr><td>Doğum İzni</td><td><div class="action-btns"><button class="action-btn"><i class="ti ti-edit"></i></button><button class="action-btn danger"><i class="ti ti-trash"></i></button></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DEPARTMAN -->
+    <div class="screen-content screen-frame" id="screen-departman">
+      <div class="mock-layout">
+        <aside class="mock-sidebar">
+          <div class="mock-sidebar-head">
+            <div class="logo-dot"><i class="ti ti-users-group"></i></div>
+            <div class="logo-text">İKYS <span>İnsan Kaynakları</span></div>
+          </div>
+          <nav class="mock-nav">
+            <div class="mock-nav-item"><i class="ti ti-layout-dashboard"></i> Dashboard</div>
+            <div class="mock-nav-item"><i class="ti ti-users"></i> Personel Yönetimi</div>
+            <div class="mock-nav-item"><i class="ti ti-calendar-event"></i> İzin Yönetimi</div>
+            <div class="mock-nav-item active"><i class="ti ti-building-community"></i> Departman Yönetimi</div>
+            <div class="mock-nav-sub">
+              <div class="mock-nav-item"><i class="ti ti-building-plus"></i> Departman Ekle</div>
+            </div>
+            <div class="mock-nav-item"><i class="ti ti-chart-bar"></i> Raporlama</div>
+          </nav>
+        </aside>
+        <div class="mock-main">
+          <div class="mock-topbar">
+            <span class="mock-topbar-title">Departman Yönetimi</span>
+            <div class="mock-topbar-right"><div class="mock-avatar">AK</div></div>
+          </div>
+          <div class="mock-body">
+            <div class="mock-page-header">
+              <div>
+                <div class="mock-page-title">Departman Listesi</div>
+                <div class="mock-page-sub">Şirket departmanlarını yönetin</div>
+              </div>
+              <button class="mock-btn"><i class="ti ti-building-plus"></i> Departman Ekle</button>
+            </div>
+            <table class="mock-table">
+              <thead><tr><th>Departman</th><th>İşlemler</th></tr></thead>
+              <tbody>
+                <tr><td>Yazılım Geliştirme</td><td><div class="action-btns"><button class="action-btn"><i class="ti ti-edit"></i></button><button class="action-btn danger"><i class="ti ti-trash"></i></button></div></td></tr>
+                <tr><td>Finans & Muhasebe</td><td><div class="action-btns"><button class="action-btn"><i class="ti ti-edit"></i></button><button class="action-btn danger"><i class="ti ti-trash"></i></button></div></td></tr>
+                <tr><td>İnsan Kaynakları</td><td><div class="action-btns"><button class="action-btn"><i class="ti ti-edit"></i></button><button class="action-btn danger"><i class="ti ti-trash"></i></button></div></td></tr>
+                <tr><td>Pazarlama</td><td><div class="action-btns"><button class="action-btn"><i class="ti ti-edit"></i></button><button class="action-btn danger"><i class="ti ti-trash"></i></button></div></td></tr>
+                <tr><td>Operasyon</td><td><div class="action-btns"><button class="action-btn"><i class="ti ti-edit"></i></button><button class="action-btn danger"><i class="ti ti-trash"></i></button></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="nasil-calisir">
+  <div class="section-inner">
+    <div class="section-tag"><i class="ti ti-route" aria-hidden="true"></i> Nasıl Çalışır</div>
+    <h2 class="section-title">Hızlı kurulum, anında kullanım</h2>
+    <p class="section-desc">Birkaç adımda sistemi yapılandırın ve İK operasyonlarınızı dijitalleştirmeye başlayın.</p>
+    <div class="steps-grid">
+      <div class="step-item">
+        <div class="step-number">1</div>
+        <h3>Departmanları Tanımlayın</h3>
+        <p>Şirket organizasyon yapınıza uygun departmanları sisteme ekleyin.</p>
+      </div>
+      <div class="step-item">
+        <div class="step-number">2</div>
+        <h3>Personelleri Kaydedin</h3>
+        <p>Çalışan bilgilerini girin, ilgili departmana atayın.</p>
+      </div>
+      <div class="step-item">
+        <div class="step-number">3</div>
+        <h3>İzin Türlerini Belirleyin</h3>
+        <p>Yıllık, mazeret, ücretsiz gibi izin türlerini özelleştirin.</p>
+      </div>
+      <div class="step-item">
+        <div class="step-number">4</div>
+        <h3>Raporları İnceleyin</h3>
+        <p>Dashboard üzerinden anlık verileri ve istatistikleri takip edin.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="baslayın">
+  <div class="section-inner" style="max-width:700px">
+    <h2 class="section-title">İK süreçlerinizi bugün modernleştirin</h2>
+    <p class="section-desc">İKYS ile personelinizi, izinlerinizi ve departmanlarınızı tek platformdan kolayca yönetin.</p>
+    <div class="hero-actions">
+      <a href="#ekranlar" class="btn-primary">
+        <i class="ti ti-eye" aria-hidden="true"></i>
+        Demo İncele
+      </a>
+      <a href="#ozellikler" class="btn-outline">
+        <i class="ti ti-info-circle" aria-hidden="true"></i>
+        Daha Fazla Bilgi
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <a href="#" class="footer-brand">
+      <div class="brand-icon"><i class="ti ti-users-group" aria-hidden="true"></i></div>
+      <div>
+        <span class="brand-name">İKYS</span>
+        <span class="brand-sub">İnsan Kaynakları Yönetim Sistemi</span>
+      </div>
+    </a>
+    <div class="footer-right">© 2026 İKYS. Tüm hakları saklıdır.</div>
+  </div>
+</footer>
+
+<script>
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 10);
+  });
+
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  hamburger.addEventListener('click', () => {
+    mobileMenu.classList.toggle('open');
+  });
+  mobileMenu.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => mobileMenu.classList.remove('open'));
+  });
+
+  function showScreen(id) {
+    document.querySelectorAll('.screen-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.screen-tab').forEach(el => el.classList.remove('active'));
+    document.getElementById('screen-' + id).classList.add('active');
+    event.currentTarget.classList.add('active');
+  }
+</script>
+</body>
+</html>
