@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Input from "../../common/Input/Input";
 import Button from "../../common/Button/Button";
 import { getPersonel } from "../../../api/personelApi";
@@ -6,6 +7,7 @@ import { getDepartmanlar } from "../../../api/departmanApi";
 import { getIzinTurleri } from "../../../api/izinTuruApi";
 
 function IzinForm({ formData, onChange, onSubmit, buttonText = "Kaydet" }) {
+  const navigate = useNavigate();
   const [personeller, setPersoneller] = useState([]);
   const [departmanlar, setDepartmanlar] = useState([]);
   const [izinTurleri, setIzinTurleri] = useState([]);
@@ -48,78 +50,84 @@ function IzinForm({ formData, onChange, onSubmit, buttonText = "Kaydet" }) {
     departmanlar.find((d) => d.id == formData.departmanId)?.name || "";
 
   return (
-    <div className="card max-w-md p-6 sm:p-8">
-      <div className="flex flex-col gap-1 mb-4">
-        <label className="field-label">Personel</label>
-        <select
-          name="personelId"
-          value={formData.personelId}
-          onChange={onPersonelChange}
-          className="field-input"
-        >
-          <option value="">Personel Seçiniz</option>
-          {personeller.map((p) => (
-            <option key={p.id} value={p.id}>{`${p.ad} ${p.soyad}`}</option>
-          ))}
-        </select>
-      </div>
+    <div className="card max-w-2xl p-6 sm:p-8">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="flex flex-col gap-1 sm:col-span-2">
+          <label className="field-label">Personel</label>
+          <select
+            name="personelId"
+            value={formData.personelId}
+            onChange={onPersonelChange}
+            className="field-input"
+          >
+            <option value="">Personel seçin...</option>
+            {personeller.map((p) => (
+              <option key={p.id} value={p.id}>{`${p.ad} ${p.soyad}`}</option>
+            ))}
+          </select>
+        </div>
 
-      <Input
-        label="Departman"
-        name="departmanAdi"
-        value={departmanAdi}
-        onChange={() => {}}
-        placeholder="Personel seçildiğinde otomatik dolar"
-        disabled
-      />
+        <Input
+          label="Departman"
+          name="departmanAdi"
+          value={departmanAdi}
+          onChange={() => {}}
+          placeholder="Personel seçildiğinde otomatik dolar"
+          disabled
+          className="sm:col-span-2"
+        />
 
-      <Input
-        label="Başlangıç Tarihi"
-        name="baslangicTarih"
-        type="date"
-        value={formData.baslangicTarih}
-        onChange={onChange}
-      />
-
-      <Input
-        label="Bitiş Tarihi"
-        name="bitisTarih"
-        type="date"
-        value={formData.bitisTarih}
-        onChange={onChange}
-      />
-
-      <div className="flex flex-col gap-1 mb-4">
-        <label className="field-label">İzin Türü</label>
-        <select
-          name="izinTuruId"
-          value={formData.izinTuruId}
+        <Input
+          label="Başlangıç Tarihi"
+          name="baslangicTarih"
+          type="date"
+          value={formData.baslangicTarih}
           onChange={onChange}
-          className="field-input"
-        >
-          <option value="">İzin Türü Seçiniz</option>
-          {izinTurleri.map((t) => (
-            <option key={t.id} value={t.id}>{t.name}</option>
-          ))}
-        </select>
-      </div>
+          className=""
+        />
 
-      <div className="flex flex-col gap-1 mb-4">
-        <label className="field-label">Durum</label>
-        <select
-          name="durum"
-          value={formData.durum}
+        <Input
+          label="Bitiş Tarihi"
+          name="bitisTarih"
+          type="date"
+          value={formData.bitisTarih}
           onChange={onChange}
-          className="field-input"
-        >
-          <option value="">Durum Seçiniz</option>
-          <option value="Onaylandı">Onaylandı</option>
-          <option value="Reddedildi">Reddedildi</option>
-          <option value="Beklemede">Beklemede</option>
-        </select>
+          className=""
+        />
+
+        <div className="flex flex-col gap-1">
+          <label className="field-label">İzin Türü</label>
+          <select
+            name="izinTuruId"
+            value={formData.izinTuruId}
+            onChange={onChange}
+            className="field-input"
+          >
+            <option value="">Tür seçin...</option>
+            {izinTurleri.map((t) => (
+              <option key={t.id} value={t.id}>{t.name}</option>
+            ))}
+          </select>
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <label className="field-label">Durum</label>
+          <select
+            name="durum"
+            value={formData.durum}
+            onChange={onChange}
+            className="field-input"
+          >
+            <option value="">Durum seçin...</option>
+            <option value="Beklemede">Beklemede</option>
+            <option value="Onaylandı">Onaylandı</option>
+            <option value="Reddedildi">Reddedildi</option>
+          </select>
+        </div>
       </div>
 
-      <div className="mt-2">
+      <div className="mt-6 flex justify-end gap-3 border-t border-accent/60 pt-4">
+        <Button text="İptal" variant="outline" onClick={() => navigate(-1)} />
         <Button text={buttonText} onClick={onSubmit} />
       </div>
     </div>

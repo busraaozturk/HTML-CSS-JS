@@ -60,9 +60,10 @@ function PersonelCreatePage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="page-title">
-        Yeni Personel
-      </h1>
+      <div>
+        <h1 className="page-title">Yeni Personel Ekle</h1>
+        <p className="text-sm text-secondary">Sisteme yeni personel kaydı oluşturun</p>
+      </div>
 
       <PersonelForm
         formData={formData}

@@ -53,8 +53,11 @@ function DepartmanPage() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
-        <h1 className="page-title">Departmanlar</h1>
-        <Button text="Yeni Departman Ekle" onClick={handleCreate} />
+        <div>
+          <h1 className="page-title">Departman Listesi</h1>
+          <p className="text-sm text-secondary">Şirket departmanlarını yönetin</p>
+        </div>
+        <Button text="Departman Ekle" onClick={handleCreate} />
       </div>
       <DepartmanTable
         departmanlar={departmanlar}

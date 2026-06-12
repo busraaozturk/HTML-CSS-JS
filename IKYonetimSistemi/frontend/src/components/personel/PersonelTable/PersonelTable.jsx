@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import Button from "../../common/Button/Button";
+import IconButton from "../../common/IconButton/IconButton";
 import { getDepartmanlar } from "../../../api/departmanApi";
+import { getDepartmanBadgeClass } from "../../../utils/badge";
 
 function PersonelTable({
     personeller,
@@ -44,13 +45,11 @@ function PersonelTable({
             <table className="w-full text-left text-sm">
                 <thead>
                     <tr className="bg-accent/40 text-title">
-                        <th className="px-4 py-3 font-semibold">ID</th>
                         <th className="px-4 py-3 font-semibold">Ad</th>
                         <th className="px-4 py-3 font-semibold">Soyad</th>
-                        <th className="px-4 py-3 font-semibold">E-mail</th>
+                        <th className="px-4 py-3 font-semibold">E-posta</th>
                         <th className="px-4 py-3 font-semibold">Telefon</th>
                         <th className="px-4 py-3 font-semibold">Departman</th>
-                        <th className="px-4 py-3 font-semibold">Oluşturma Tarihi</th>
                         <th className="px-4 py-3 font-semibold">İşlemler</th>
                     </tr>
                 </thead>
@@ -58,29 +57,29 @@ function PersonelTable({
                 <tbody className="divide-y divide-accent/40">
                     {personeller.map((p) => (
                         <tr key={p.id} className="transition hover:bg-background">
-                            <td className="px-4 py-3">{p.id}</td>
                             <td className="px-4 py-3">{p.ad}</td>
                             <td className="px-4 py-3">{p.soyad}</td>
                             <td className="px-4 py-3">{p.email}</td>
                             <td className="px-4 py-3">{p.telefon}</td>
                             <td className="px-4 py-3">
-                                {getDepartmanAdi(p.departmanId)}
-                            </td>
-                            <td className="px-4 py-3">
-                                {p.olusturmaTarihi}
+                                <span className={`badge ${getDepartmanBadgeClass(p.departmanId)}`}>
+                                    {getDepartmanAdi(p.departmanId)}
+                                </span>
                             </td>
 
                             <td className="px-4 py-3">
                                 <div className="flex gap-2">
 
-                                    <Button
-                                        text="Düzenle"
+                                    <IconButton
+                                        icon="ti-edit"
+                                        label="Düzenle"
                                         onClick={() => onEdit(p.id)}
                                     />
 
-                                    <Button
-                                        text="Sil"
-                                        variant="outline"
+                                    <IconButton
+                                        icon="ti-trash"
+                                        variant="danger"
+                                        label="Sil"
                                         onClick={() => handleDeleteClick(p.id)}
                                     />
 
@@ -88,6 +87,14 @@ function PersonelTable({
                             </td>
                         </tr>
                     ))}
+
+                    {personeller.length === 0 && (
+                        <tr>
+                            <td colSpan={6} className="px-4 py-6 text-center text-muted">
+                                Personel bulunamadı.
+                            </td>
+                        </tr>
+                    )}
                 </tbody>
             </table>
         </div>

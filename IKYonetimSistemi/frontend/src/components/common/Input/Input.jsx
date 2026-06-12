@@ -1,6 +1,6 @@
-function Input({ label, name, value, onChange, type = "text", placeholder, disabled = false}) {
+function Input({ label, name, value, onChange, type = "text", placeholder, disabled = false, className = "mb-4"}) {
     return (
-        <div className="flex flex-col gap-1 mb-4">
+        <div className={`flex flex-col gap-1 ${className}`.trim()}>
             {label && (<label className="field-label">{label}</label>)}
             <input
                 type={type}

@@ -1,4 +1,4 @@
-import Button from "../../common/Button/Button";
+import IconButton from "../../common/IconButton/IconButton";
 
 function IzinTuruTable({ izinTurleri, onDelete, onEdit }) {
   const handleDeleteClick = (id) => {
@@ -16,24 +16,30 @@ function IzinTuruTable({ izinTurleri, onDelete, onEdit }) {
       <table className="w-full text-left text-sm">
         <thead>
           <tr className="bg-accent/40 text-title">
-            <th className="px-4 py-3 font-semibold">ID</th>
-            <th className="px-4 py-3 font-semibold">Ad</th>
+            <th className="px-4 py-3 font-semibold">İzin Türü</th>
             <th className="px-4 py-3 font-semibold">İşlemler</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-accent/40">
           {izinTurleri.map((t) => (
             <tr key={t.id} className="transition hover:bg-background">
-              <td className="px-4 py-3">{t.id}</td>
               <td className="px-4 py-3">{t.name}</td>
               <td className="px-4 py-3">
                 <div className="flex gap-2">
-                  <Button text="Düzenle" onClick={() => onEdit(t.id)} />
-                  <Button text="Sil" variant="outline" onClick={() => handleDeleteClick(t.id)} />
+                  <IconButton icon="ti-edit" label="Düzenle" onClick={() => onEdit(t.id)} />
+                  <IconButton icon="ti-trash" variant="danger" label="Sil" onClick={() => handleDeleteClick(t.id)} />
                 </div>
               </td>
             </tr>
           ))}
+
+          {izinTurleri.length === 0 && (
+            <tr>
+              <td colSpan={2} className="px-4 py-6 text-center text-muted">
+                İzin türü bulunamadı.
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>

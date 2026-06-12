@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import Input from "../../common/Input/Input";
 import Button from "../../common/Button/Button";
 
@@ -7,6 +8,8 @@ function DepartmanForm({
     onSubmit,
     buttonText = "Kaydet",
 }) {
+    const navigate = useNavigate();
+
     return (
         <div className="card max-w-md p-6 sm:p-8">
             <Input
@@ -29,7 +32,10 @@ function DepartmanForm({
                 />
             </div>
 
-            <Button text={buttonText} onClick={onSubmit} className="mt-2" />
+            <div className="mt-2 flex justify-end gap-3 border-t border-accent/60 pt-4">
+                <Button text="İptal" variant="outline" onClick={() => navigate(-1)} />
+                <Button text={buttonText} onClick={onSubmit} />
+            </div>
         </div>
     );
 }

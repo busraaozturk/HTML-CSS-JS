@@ -8,6 +8,7 @@ function PersonelPage() {
   const navigate = useNavigate();
   const [personeller, setPersoneller] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
 
   // GET Personeller
 
@@ -48,6 +49,15 @@ function PersonelPage() {
     navigate("/personel/ekle");
   };
 
+  const filteredPersoneller = personeller.filter((p) => {
+    const term = search.toLowerCase();
+    return (
+      p.ad?.toLowerCase().includes(term) ||
+      p.soyad?.toLowerCase().includes(term) ||
+      p.email?.toLowerCase().includes(term)
+    );
+  });
+
   // UI
   if (loading) {
     return <div className="text-sm text-muted">Yükleniyor...</div>;
@@ -56,12 +66,25 @@ function PersonelPage() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
-        <h1 className="page-title">Personel Listesi</h1>
+        <div>
+          <h1 className="page-title">Personel Listesi</h1>
+          <p className="text-sm text-secondary">Tüm personelleri görüntüleyin ve yönetin</p>
+        </div>
         <Button text="Yeni Personel Ekle" onClick={handleCreate} />
       </div>
 
+      <div className="search-field">
+        <i className="ti ti-search text-base" aria-hidden="true"></i>
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Personel ara..."
+        />
+      </div>
+
       <PersonelTable
-        personeller={personeller}
+        personeller={filteredPersoneller}
         onDelete={onDelete}
         onEdit={onEdit}
       />

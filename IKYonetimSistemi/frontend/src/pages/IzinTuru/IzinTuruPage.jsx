@@ -53,8 +53,11 @@ function IzinTuruPage() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
-        <h1 className="page-title">İzin Türleri</h1>
-        <Button text="Yeni İzin Türü Ekle" onClick={handleCreate} />
+        <div>
+          <h1 className="page-title">İzin Türleri</h1>
+          <p className="text-sm text-secondary">Tanımlı izin türlerini yönetin</p>
+        </div>
+        <Button text="İzin Türü Ekle" onClick={handleCreate} />
       </div>
       <IzinTuruTable
         izinTurleri={izinTurleri}

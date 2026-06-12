@@ -46,7 +46,10 @@ function IzinCreatePage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="page-title">Yeni İzin Ekle</h1>
+      <div>
+        <h1 className="page-title">Yeni İzin Ekle</h1>
+        <p className="text-sm text-secondary">Personel için izin kaydı oluşturun</p>
+      </div>
       <IzinForm
         formData={formData}
         onChange={onChange}
